@@ -18,7 +18,7 @@
 import traceback
 import json
 
-import communicator
+from communicator import Communicator
 import utils.logger
 
 
@@ -68,7 +68,8 @@ def application(env, start_response):
     validation_result = validate_request(request)
     if validation_result != "":
         return send_error(start_response, validation_result)
-    
+
+    communicator = Communicator()
     communicator_result = None
     try:
         if request["action"] == "ui":

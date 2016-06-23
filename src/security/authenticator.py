@@ -15,23 +15,21 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from utils.singleton import Singleton
-from security.authenticator import Authenticator
+import database
+from database.exception import DatabaseException
 
 
-class Communicator(Singleton):
-    '''Interface between listeners and the application.'''
-
-    def _initialize(self):
-        self._authenticator = Authenticator()
+class AuthenticationFailedError(Exception):
+    '''Raises if a robot could not be authenticated.'''
 
 
-    def do_action(self, robot_id, password, action_type, args):
-        '''Do an action that a robot requested.'''
-        self._authenticator.authenticate_robot(robot_id, password)
+class Authenticator:
 
+    def authenticate_robot(self, robot_id, password):
+        '''Authenticate the robot access and its password.'''
+        correct_password = database.db.get_robot_password(robot_id)
 
-    def get_ui_data(self, password):
-        '''
-        '''
-        return {"result": "UI Data."}
+        if password == correct_password:
+            return
+
+        raise AuthenticationFailedError("Wrong password for Robot {0}".format(robot_id))

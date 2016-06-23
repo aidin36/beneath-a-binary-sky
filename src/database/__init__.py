@@ -15,23 +15,6 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from utils.singleton import Singleton
-from security.authenticator import Authenticator
+import database.memcached_database
 
-
-class Communicator(Singleton):
-    '''Interface between listeners and the application.'''
-
-    def _initialize(self):
-        self._authenticator = Authenticator()
-
-
-    def do_action(self, robot_id, password, action_type, args):
-        '''Do an action that a robot requested.'''
-        self._authenticator.authenticate_robot(robot_id, password)
-
-
-    def get_ui_data(self, password):
-        '''
-        '''
-        return {"result": "UI Data."}
+db = memcached_database.MemcachedDatabase()

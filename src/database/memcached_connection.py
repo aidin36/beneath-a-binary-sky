@@ -15,23 +15,18 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import pylibmc
+
 from utils.singleton import Singleton
-from security.authenticator import Authenticator
 
 
-class Communicator(Singleton):
-    '''Interface between listeners and the application.'''
-
+class MemcachedConnection(Singleton):
+    
     def _initialize(self):
-        self._authenticator = Authenticator()
+        self._mc_client = pylibmc.Client(["127.0.0.1"],
+                                         binary=True,
+                                         behaviors={"tcp_nodelay": True,
+                                                    "ketama": True})
 
-
-    def do_action(self, robot_id, password, action_type, args):
-        '''Do an action that a robot requested.'''
-        self._authenticator.authenticate_robot(robot_id, password)
-
-
-    def get_ui_data(self, password):
-        '''
-        '''
-        return {"result": "UI Data."}
+    def get_connection(self):
+        return self._mc_client
