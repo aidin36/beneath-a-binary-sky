@@ -1,0 +1,9 @@
+# Backup files
+*~
+
+# Python bytecodes
+*.pyc
+
+# Python cache directory
+__pycache__
+
