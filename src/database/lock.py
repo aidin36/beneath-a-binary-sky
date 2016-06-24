@@ -28,8 +28,8 @@ class LockAlreadyAquiredException(Exception):
 class Lock:
     '''Handles a lock on database.
     
-    Usage:
-        with Lock():
+    Example Usage:
+        with Lock(robot_id):
             # Do stuff with database.
     '''
 
@@ -40,7 +40,8 @@ class Lock:
     def aquire(self):
         '''Aquires the lock. Raises exception if lock is already aquired.'''
         mc_connection = MemcachedConnection().get_connection()
-        if not mc_connection.add(self.__lock_name):
+
+        if not mc_connection.add(self.__lock_name, 1):
             raise LockAlreadyAquiredException()
 
     def release(self):
@@ -48,10 +49,10 @@ class Lock:
         If the lock wasn't aquired, it will ignore it silently.
         '''
         mc_connection = MemcachedConnection().get_connection()
-        mc_connection.remove(self.__lock_name)
+        mc_connection.delete(self.__lock_name)
 
     def __enter__(self):
         self.aquire()
 
-    def __exit__(self):
+    def __exit__(self, *args):
         self.release()

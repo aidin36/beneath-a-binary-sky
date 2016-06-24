@@ -18,3 +18,4 @@
 def error(log_message):
     '''
     '''
+    print("Error:", log_message)

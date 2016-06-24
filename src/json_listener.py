@@ -80,9 +80,9 @@ def application(env, start_response):
                                                          request["action"],
                                                          request.get("args"))
     except Exception as error:
-        utils.logger.error("Unhandled error: {0}\n{1}".format(error, traceback.format_ex()))
-        send_error(start_response, str(error))
-    
+        utils.logger.error("Unhandled error: {0}\n{1}".format(error, traceback.format_exc()))
+        return send_error(start_response, str(error))
+
     result = {'status': 200,
               'result': communicator_result}
     

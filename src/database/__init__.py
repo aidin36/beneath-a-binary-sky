@@ -14,7 +14,3 @@
 # You should have received a copy of the GNU General Public License
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
-
-import database.memcached_database
-
-db = memcached_database.MemcachedDatabase()

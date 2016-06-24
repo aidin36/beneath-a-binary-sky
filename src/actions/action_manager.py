@@ -15,20 +15,21 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from utils.singleton import Singleton
-from actions.action_manager import ActionManager
+from database.memcached_database import MemcachedDatabase
+from database.lock import Lock
+from security.authenticator import Authenticator
 
-class Communicator(Singleton):
-    '''Interface between listeners and the application.'''
 
-    def _initialize(self):
-        self._action_manager = ActionManager()
+class ActionManager:
+
+    def __init__(self):
+        self._authenticator = Authenticator()
+        self._database = MemcachedDatabase()
+
 
     def do_action(self, robot_id, password, action_type, args):
-        '''Do an action that a robot requested.'''
-        return self._action_manager.do_action(robot_id, password, action_type, args)
+        '''Will do the requested action.'''
+        with Lock(robot_id):
+            robot = self._database.get_robot(robot_id)
 
-    def get_ui_data(self, password):
-        '''
-        '''
-        return {"result": "UI Data."}
+            self._authenticator.authenticate_robot(robot, password)

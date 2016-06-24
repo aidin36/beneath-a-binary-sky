@@ -21,11 +21,6 @@ from database.memcached_connection import MemcachedConnection
 from database.exception import DatabaseException
 
 
-# These abbrevations used to reduce the size of keys, thus
-# reducing the size of database and overhead of communicating with it.
-ROBOT_PASSWORD_PREFIX = "RP-"
-
-
 class CannotAddRobotError(DatabaseException):
     '''Raises when there is a problem for adding a robot to the database.
     Common causes:
@@ -40,30 +35,25 @@ class RobotNotFoundError(DatabaseException):
 
 class MemcachedDatabase:
 
-    def add_robot_password(self, robot_id, password):
-        '''Adds a robot's password to the database.
-        
-        @raise CannotAddRobotError: If robot exists, or any
-            errors happen.
-        '''
+    def add_robot(self, robot_object, x, y):
+        '''Adds the new robot object to the specified position.'''
         mc_connection = MemcachedConnection().get_connection()
 
-        result = mc_connection.add("{0}{1}".format(ROBOT_PASSWORD_PREFIX, robot_id),
-                                   password)
+        result = mc_connection.add(robot_object.get_id(), robot_object)
 
         if not result:
-            raise CannotAddRobotError("Robot ID is already exists, or there's something wrong with the database.")
+            error_message = "Robot {0} is already exists, or there's something wrong with the database."
+            raise CannotAddRobotError(error_message.format(robot_object.get_id()))
 
-    def get_robot_password(self, robot_id):
-        '''Returns password of the specified robot ID.
-        
-        @raise RobotNotFoundError: Raises if nothing found with
-            the specified robot ID.
+    def get_robot(self, robot_id):
+        '''Gets the robot object with the specified ID from the database.
+
+        @raise RobotNotFoundError: When no robot found with this ID.
         '''
         mc_connection = MemcachedConnection().get_connection()
 
-        result = mc_connection.get("{0}{1}".format(ROBOT_PASSWORD_PREFIX, robot_id))
-        
+        result = mc_connection.get(robot_id)
+
         if result is None:
             raise RobotNotFoundError("Robot {0} not found.".format(robot_id))
 

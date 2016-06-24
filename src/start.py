@@ -16,15 +16,16 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
-import pylibmc
 
-import database
+from database.memcached_database import MemcachedDatabase
+from objects.robot import Robot
 
 
 def main():
     # Initializing a fake database.
-    database.db.add_robot_password("23145tgf4r", "123")
-    
+    database = MemcachedDatabase()
+    database.add_robot(Robot("jfhdieu82839", "123"), 2, 1)
+
     # Actually starting the application.
     os.system("uwsgi --http :9090 --wsgi-file json_listener.py")
 

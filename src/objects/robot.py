@@ -15,20 +15,21 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from utils.singleton import Singleton
-from actions.action_manager import ActionManager
+class Robot:
 
-class Communicator(Singleton):
-    '''Interface between listeners and the application.'''
+    def __init__(self, id, password):
+        self._id = id
+        self._alive = True
+        self._password = password
 
-    def _initialize(self):
-        self._action_manager = ActionManager()
+    def get_id(self):
+        return self._id
 
-    def do_action(self, robot_id, password, action_type, args):
-        '''Do an action that a robot requested.'''
-        return self._action_manager.do_action(robot_id, password, action_type, args)
+    def get_alive(self):
+        return self._alive
 
-    def get_ui_data(self, password):
-        '''
-        '''
-        return {"result": "UI Data."}
+    def set_alive(self, alive):
+        self._alive = alive
+
+    def get_password(self):
+        return self._password

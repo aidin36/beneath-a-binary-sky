@@ -15,9 +15,6 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-import database
-from database.exception import DatabaseException
-
 
 class AuthenticationFailedError(Exception):
     '''Raises if a robot could not be authenticated.'''
@@ -25,11 +22,11 @@ class AuthenticationFailedError(Exception):
 
 class Authenticator:
 
-    def authenticate_robot(self, robot_id, password):
+    def authenticate_robot(self, robot_object, password):
         '''Authenticate the robot access and its password.'''
-        correct_password = database.db.get_robot_password(robot_id)
 
-        if password == correct_password:
-            return
+        if password != robot_object.get_password():
+            raise AuthenticationFailedError("Wrong password for Robot {0}".format(robot_object.get_id()))
 
-        raise AuthenticationFailedError("Wrong password for Robot {0}".format(robot_id))
+        if not robot_object.get_alive():
+            raise AuthenticationFailedError("Robot {0} is dead!".format(robot_object.get_id()))
