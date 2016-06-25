@@ -33,6 +33,12 @@ class TestAddRobot(unittest.TestCase):
         # No exception should be raise.
         database.add_robot(new_robot, 0, 0)
 
+        gotted_robot = database.get_robot("test_simple_add_")
+
+        self.assertEqual(gotted_robot.get_id(), new_robot.get_id())
+        self.assertEqual(gotted_robot.get_alive(), new_robot.get_alive())
+        self.assertEqual(gotted_robot.get_password(), new_robot.get_password())
+
     def test_duplicate_add(self):
         '''Adding two robots with same ID. Should be failed.'''
         database = MemcachedDatabase()
