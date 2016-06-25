@@ -15,22 +15,26 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import sys
+import os.path
+import unittest
+import subprocess
 
-class AuthenticationFailedError(Exception):
-    '''Raises if a robot could not be authenticated.'''
 
+def main():
+    # Adding main source directory to the modules path.
+    current_module_directory = os.path.abspath(os.path.dirname(sys.modules[__name__].__file__))
+    sys.path.insert(0, os.path.join(current_module_directory, '..', 'src'))
 
-class Authenticator:
+    # Running new instance of memcached.
+    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", "11536"])
 
-    def authenticate_robot(self, robot_object, password):
-        '''Authenticate the robot access and its password.'''
+    loader = unittest.TestLoader()
+    test_suit = loader.discover(current_module_directory)
+    unittest.runner.TextTestRunner().run(test_suit)
 
-        # Ensuring that password is a string.
-        if not isinstance(password, str):
-            raise AuthenticationFailedError("Wrong password for Robot {0}".format(robot_object.get_id()))
+    # Terminating previously started memcached.
+    memcached_process.terminate()
 
-        if password != robot_object.get_password():
-            raise AuthenticationFailedError("Wrong password for Robot {0}".format(robot_object.get_id()))
-
-        if not robot_object.get_alive():
-            raise AuthenticationFailedError("Robot {0} is dead!".format(robot_object.get_id()))
+if __name__ == '__main__':
+    main()

@@ -15,8 +15,6 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-import pylibmc
-
 from database.memcached_connection import MemcachedConnection
 from database.exception import DatabaseException
 

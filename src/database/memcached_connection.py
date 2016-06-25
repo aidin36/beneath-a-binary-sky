@@ -23,10 +23,8 @@ from utils.singleton import Singleton
 class MemcachedConnection(Singleton):
     
     def _initialize(self):
-        self._mc_client = pylibmc.Client(["127.0.0.1"],
-                                         binary=True,
-                                         behaviors={"tcp_nodelay": True,
-                                                    "ketama": True})
+        self._mc_client = pylibmc.Client(["127.0.0.1:11536"],
+                                         binary=True)
 
     def get_connection(self):
         return self._mc_client

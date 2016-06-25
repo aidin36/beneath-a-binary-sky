@@ -22,7 +22,7 @@ from database.memcached_connection import MemcachedConnection
 
 LOCK_POSTFIX = '_L'
 
-class LockAlreadyAquiredException(Exception):
+class LockAlreadyAquiredError(Exception):
     '''Raises when lock for a specific key is hold by someone else.'''
 
 class Lock:
@@ -42,7 +42,7 @@ class Lock:
         mc_connection = MemcachedConnection().get_connection()
 
         if not mc_connection.add(self.__lock_name, 1):
-            raise LockAlreadyAquiredException()
+            raise LockAlreadyAquiredError()
 
     def release(self):
         '''Releases the lock.

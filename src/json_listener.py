@@ -44,17 +44,17 @@ def validate_request(request):
     @raise InvalidJSONError: If the request is not valid.
     '''
     if 'action' not in request:
-        raise InvalidJSONError("`command' key in request is mandatory.")
+        raise InvalidJSONError("`action' key in request is mandatory.")
 
     if 'password' not in request:
-        InvalidJSONError("`password' key in request is mandatory.")
+        raise InvalidJSONError("`password' key in request is mandatory.")
 
     if request['action'] == 'ui':
         # UI does not have any thing else.
         return
 
     if 'robot_id' not in request:
-        InvalidJSONError("`robot_id' key in request is mandatory.")
+        raise InvalidJSONError("`robot_id' key in request is mandatory.")
 
 
 def application(env, start_response):
