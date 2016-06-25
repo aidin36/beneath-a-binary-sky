@@ -22,56 +22,57 @@ from communicator import Communicator
 import utils.logger
 
 
-def send_error(start_response, error_message):
+class InvalidJSONError(Exception):
+    '''Raises if received JSON is not valid. i.e. it dose not have required fields.'''
+
+class InvalidHttpMethodError(Exception):
+    '''Raises if the HTTP Method is not acceptable.'''
+
+
+def send_error(start_response, error):
     '''Sends error to the client.'''
     start_response("500 Error", [])
     error = {'status': 500,
-             'error': error_message}
+             'error_code': type(error).__name__,
+             'error_message': str(error)}
     return [json.dumps(error).encode('utf-8')]
 
 
 def validate_request(request):
     '''Validates if the request have the required fields.
     
-    Returns an error message if the request is invalid,
-    returns an empty string otherwise.
+    @raise InvalidJSONError: If the request is not valid.
     '''
     if 'action' not in request:
-        return "`command' key in request is mandatory."
+        raise InvalidJSONError("`command' key in request is mandatory.")
 
     if 'password' not in request:
-        return "`password' key in request is mandatory."
+        InvalidJSONError("`password' key in request is mandatory.")
 
     if request['action'] == 'ui':
         # UI does not have any thing else.
-        return ""
+        return
 
     if 'robot_id' not in request:
-        return "`robot_id' key in request is mandatory."
-
-    return ""
+        InvalidJSONError("`robot_id' key in request is mandatory.")
 
 
 def application(env, start_response):
     '''A uWSGI application'''
 
-    if env["REQUEST_METHOD"] != "POST":
-        return send_error(start_response, "Only POST method allowed")
-
-    json_request = env["wsgi.input"].read()
-
     try:
+        if env["REQUEST_METHOD"] != "POST":
+            raise InvalidHttpMethodError("Only POST method allowed")
+
+        json_request = env["wsgi.input"].read()
+
         request = json.loads(json_request.decode("utf-8"))
-    except Exception as error:
-        return send_error(start_response, str(error))
 
-    validation_result = validate_request(request)
-    if validation_result != "":
-        return send_error(start_response, validation_result)
+        validate_request(request)
 
-    communicator = Communicator()
-    communicator_result = None
-    try:
+        # Communicator is a singleton class.
+        communicator = Communicator()
+
         if request["action"] == "ui":
             communicator_result = communicator.get_ui_data(request["password"])
         else:
@@ -80,8 +81,8 @@ def application(env, start_response):
                                                          request["action"],
                                                          request.get("args"))
     except Exception as error:
-        utils.logger.error("Unhandled error: {0}\n{1}".format(error, traceback.format_exc()))
-        return send_error(start_response, str(error))
+        utils.logger.error("JSON Listener: {0}\n{1}".format(error, traceback.format_exc()))
+        return send_error(start_response, error)
 
     result = {'status': 200,
               'result': communicator_result}
