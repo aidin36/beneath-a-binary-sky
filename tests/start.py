@@ -31,10 +31,14 @@ def main():
 
     loader = unittest.TestLoader()
     test_suit = loader.discover(current_module_directory)
-    unittest.runner.TextTestRunner().run(test_suit)
+    result = unittest.runner.TextTestRunner().run(test_suit)
 
     # Terminating previously started memcached.
     memcached_process.terminate()
+
+    # Setting exit code, so automated scripts would now that tests are failed.
+    if not result.wasSuccessful():
+        sys.exit(100)
 
 if __name__ == '__main__':
     main()
