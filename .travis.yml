@@ -9,6 +9,9 @@ python:
 services:
   - memcached
 
+install:
+  - pip install pylibmc
+
 script:
   python ./tests/start.py
 
