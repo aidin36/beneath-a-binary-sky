@@ -16,18 +16,27 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
+import subprocess
+import time
 
 from database.memcached_database import MemcachedDatabase
 from objects.robot import Robot
 
 
 def main():
+    # Running new instance of memcached.
+    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", "11536"])
+    # Waiting for the memcache to start.
+    time.sleep(0.2)
+
     # Initializing a fake database.
     database = MemcachedDatabase()
     database.add_robot(Robot("jfhdieu82839", "123"), 2, 1)
 
     # Actually starting the application.
     os.system("uwsgi --http :9090 --wsgi-file json_listener.py")
+
+    memcached_process.terminate()
 
 if __name__ == "__main__":
     main()
