@@ -51,9 +51,18 @@ class TestReqiest(unittest.TestCase):
         self.assertEqual(result["status"], 500)
         self.assertEqual(result["error_code"], "InvalidJSONError")
 
-        missed_command = {"password": "123"}
+        missed_command = {"password": "123",
+                          "args": []}
 
         result = self.call_application_func(missed_command)
+
+        self.assertEqual(result["status"], 500)
+        self.assertEqual(result["error_code"], "InvalidJSONError")
+
+        missed_args = {"password": "123",
+                       "command": "status"}
+
+        result = self.call_application_func(missed_args)
 
         self.assertEqual(result["status"], 500)
         self.assertEqual(result["error_code"], "InvalidJSONError")
@@ -61,6 +70,26 @@ class TestReqiest(unittest.TestCase):
         missed_all = {}
 
         result = self.call_application_func(missed_all)
+
+        self.assertEqual(result["status"], 500)
+        self.assertEqual(result["error_code"], "InvalidJSONError")
+
+    def test_bad_args(self):
+        '''Sends bad args.'''
+        request = {"password": "123",
+                   "command": "move",
+                   "args": None}
+
+        result = self.call_application_func(request)
+
+        self.assertEqual(result["status"], 500)
+        self.assertEqual(result["error_code"], "InvalidJSONError")
+
+        request = {"password": "123",
+                   "command": "move",
+                   "args": ""}
+
+        result = self.call_application_func(request)
 
         self.assertEqual(result["status"], 500)
         self.assertEqual(result["error_code"], "InvalidJSONError")

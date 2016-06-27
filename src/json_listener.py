@@ -49,6 +49,11 @@ def validate_request(request):
     if 'password' not in request:
         raise InvalidJSONError("`password' key in request is mandatory.")
 
+    if 'args' not in request:
+        raise InvalidJSONError("`args' key should be provided.")
+
+    if not isinstance(request['args'], list):
+        raise InvalidJSONError("`args' should be a list. If you don't have any arguments, provide an empty list.")
 
 def application(env, start_response):
     '''A uWSGI application'''
@@ -68,7 +73,7 @@ def application(env, start_response):
 
         communicator_result = communicator.execute_command(request["password"],
                                                             request["command"],
-                                                            request.get("args"))
+                                                            request["args"])
     except Exception as error:
         utils.logger.error("JSON Listener: {0}\n{1}".format(error, traceback.format_exc()))
         return send_error(start_response, error)
