@@ -15,9 +15,14 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from actions.action import Action
 
-class InvalidArgumentsError(Exception):
-    '''Raises if arguments of an action are not correct.'''
 
-class InvalidAction(Exception):
-    '''Raises when specified action does not exists or invalid.'''
+class StatusAction(Action):
+    '''This action sends the status of the robot to the client.'''
+
+
+    def do_action(self, robot, args):
+        '''Do the status action.'''
+
+        return {'alive': robot.get_alive()}

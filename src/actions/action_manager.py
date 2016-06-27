@@ -18,7 +18,8 @@
 from database.memcached_database import MemcachedDatabase
 from database.lock import Lock
 from security.authenticator import Authenticator
-from actions.exceptions import InvalidArgumentsError
+import actions.exceptions as exceptions
+from actions.status_action import StatusAction
 
 
 class ActionManager:
@@ -27,17 +28,36 @@ class ActionManager:
         self._authenticator = Authenticator()
         self._database = MemcachedDatabase()
 
+        self._actions = {'status': StatusAction()}
+
 
     def do_action(self, password, action_type, args):
         '''Will do the requested action.'''
         if len(args) == 0:
-            InvalidArgumentsError("`robot_id' should be passes as the first argument.")
+            raise exceptions.InvalidArgumentsError("`robot_id' should be passes as the first argument.")
 
         robot_id = args[0]
         if not isinstance(robot_id, str):
-            InvalidArgumentsError("First argument (robot_id) should be a string, not {0}".format(type(robot_id)))
+            raise exceptions.InvalidArgumentsError(
+                "First argument (robot_id) should be a string, not {0}".format(type(robot_id)))
 
         with Lock(robot_id):
             robot = self._database.get_robot(robot_id)
 
             self._authenticator.authenticate_robot(robot, password)
+
+            handler = self._get_action_handler(action_type)
+
+            return handler.do_action(robot, args)
+
+    def _get_action_handler(self, action_type):
+        '''Returns instance that should handle this action.'''
+        if not isinstance(action_type, str):
+            raise exceptions.InvalidAction("Action type must be str, not {0}".format(type(action_type)))
+
+        handler = self._actions.get(action_type)
+
+        if handler is None:
+            raise exceptions.InvalidAction("Action {0} does not exists.".format(action_type))
+
+        return handler

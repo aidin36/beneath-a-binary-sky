@@ -15,9 +15,19 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import unittest
 
-class InvalidArgumentsError(Exception):
-    '''Raises if arguments of an action are not correct.'''
+from objects.robot import Robot
+from actions.status_action import StatusAction
 
-class InvalidAction(Exception):
-    '''Raises when specified action does not exists or invalid.'''
+
+class TestStatusAction(unittest.TestCase):
+
+    def test_ok(self):
+        '''Test status of a good robot object.'''
+        robot = Robot("status_test_robot", "123")
+
+        action = StatusAction()
+        result = action.do_action(robot, [])
+
+        self.assertEqual(result['alive'], robot.get_alive())

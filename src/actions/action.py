@@ -16,8 +16,11 @@
 # <http://www.gnu.org/licenses/>.
 
 
-class InvalidArgumentsError(Exception):
-    '''Raises if arguments of an action are not correct.'''
+class Action:
+    '''Base of all action classes.'''
 
-class InvalidAction(Exception):
-    '''Raises when specified action does not exists or invalid.'''
+    def do_action(self, robot, args):
+        '''Do the action that robot requested.
+
+        @param robot: Instance of `objects.robot.Robot'.
+        '''
