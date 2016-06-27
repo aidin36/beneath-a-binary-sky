@@ -16,6 +16,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import sys
+import time
 import os.path
 import unittest
 import subprocess
@@ -28,6 +29,9 @@ def main():
 
     # Running new instance of memcached.
     memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", "11536"])
+
+    # Sleeping a little, to ensure Memcached is started.
+    time.sleep(0.2)
 
     # Initializing the database.
     from database.memcached_database import MemcachedDatabase
