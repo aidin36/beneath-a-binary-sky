@@ -43,33 +43,17 @@ class TestReqiest(unittest.TestCase):
 
     def test_missing_fields(self):
         '''Sends a request which some of its fields are missed.'''
-        missed_password = {"robot_id": "missing_fields_test",
-                           "action": "move"}
+        missed_password = {"command": "move",
+                           "args": ["jfnfdhdfieop"]}
 
         result = self.call_application_func(missed_password)
 
         self.assertEqual(result["status"], 500)
         self.assertEqual(result["error_code"], "InvalidJSONError")
 
-        missed_password_2 = {"action": "ui"}
+        missed_command = {"password": "123"}
 
-        result = self.call_application_func(missed_password)
-
-        self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
-
-        missed_robot_id = {"password": "98disdf3",
-                           "action": "move"}
-
-        result = self.call_application_func(missed_robot_id)
-
-        self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
-
-        missed_action = {"password": "123",
-                         "robot_id": "afsfd23"}
-
-        result = self.call_application_func(missed_action)
+        result = self.call_application_func(missed_command)
 
         self.assertEqual(result["status"], 500)
         self.assertEqual(result["error_code"], "InvalidJSONError")
@@ -81,12 +65,11 @@ class TestReqiest(unittest.TestCase):
         self.assertEqual(result["status"], 500)
         self.assertEqual(result["error_code"], "InvalidJSONError")
 
-
     def test_good_request(self):
         '''An OK request.'''
-        request = {"robot_id": "good_request_robot_id",
-                   "password": "123",
-                   "action": "move"}
+        request = {"password": "123",
+                   "command": "status",
+                   "args": ["good_request_robot_id"]}
 
         result = self.call_application_func(request)
 
@@ -103,7 +86,6 @@ class TestReqiest(unittest.TestCase):
         result = json.loads(result[0].decode("utf-8"))
 
         self.assertEqual(result["status"], 500)
-
 
         env = {"REQUEST_METHOD": "POST",
                "wsgi.input": '{"action": "ui", "password": "123"}'}

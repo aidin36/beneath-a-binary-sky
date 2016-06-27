@@ -43,18 +43,11 @@ def validate_request(request):
     
     @raise InvalidJSONError: If the request is not valid.
     '''
-    if 'action' not in request:
-        raise InvalidJSONError("`action' key in request is mandatory.")
+    if 'command' not in request:
+        raise InvalidJSONError("`command' key in request is mandatory.")
 
     if 'password' not in request:
         raise InvalidJSONError("`password' key in request is mandatory.")
-
-    if request['action'] == 'ui':
-        # UI does not have any thing else.
-        return
-
-    if 'robot_id' not in request:
-        raise InvalidJSONError("`robot_id' key in request is mandatory.")
 
 
 def application(env, start_response):
@@ -73,13 +66,9 @@ def application(env, start_response):
         # Communicator is a singleton class.
         communicator = Communicator()
 
-        if request["action"] == "ui":
-            communicator_result = communicator.get_ui_data(request["password"])
-        else:
-            communicator_result = communicator.do_action(request["robot_id"],
-                                                         request["password"],
-                                                         request["action"],
-                                                         request.get("args"))
+        communicator_result = communicator.execute_command(request["password"],
+                                                            request["command"],
+                                                            request.get("args"))
     except Exception as error:
         utils.logger.error("JSON Listener: {0}\n{1}".format(error, traceback.format_exc()))
         return send_error(start_response, error)

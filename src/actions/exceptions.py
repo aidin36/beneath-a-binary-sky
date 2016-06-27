@@ -15,21 +15,6 @@
 # along with Beneach a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from utils.singleton import Singleton
-from actions.action_manager import ActionManager
 
-class Communicator(Singleton):
-    '''Interface between listeners and the application.'''
-
-    def _initialize(self):
-        self._action_manager = ActionManager()
-
-    def execute_command(self, password, command, args):
-        '''Execute client's command.'''
-
-        if command == "ui":
-            pass
-        elif command == "stats":
-            pass
-        else:
-            return self._action_manager.do_action(password, command, args)
+class InvalidArgumentsError(Exception):
+    '''Raises if arguments of an action are not correct.'''
