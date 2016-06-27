@@ -16,9 +16,11 @@
 # <http://www.gnu.org/licenses/>.
 
 import unittest
+import unittest.mock
 
-from database.memcached_database import MemcachedDatabase
-from database.memcached_database import CannotAddRobotError
+from database.memcached_database import MemcachedDatabase, CannotAddRobotError
+from database.exceptions import CouldNotSetValueBecauseOfCuncurrency
+from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot
 
 
@@ -49,3 +51,27 @@ class TestAddRobot(unittest.TestCase):
         robot2 = Robot("test_duplicate_add_", "123")
         with self.assertRaises(CannotAddRobotError):
             database.add_robot(robot2, 1, 2)
+
+    def test_concurrent_add_failure(self):
+        '''Tests the behavior of Database class, when concurrent add fails.'''
+
+        # Mocking `cas' method, making it always return False.
+        def mocked_cas(*args):
+            return False
+        mc_connection = MemcachedConnection().get_connection()
+        original_cas = mc_connection.cas
+        mc_connection.cas = unittest.mock.Mock(side_effect=mocked_cas)
+
+        try:
+            new_robot = Robot("test_concurrent_add_failure_9865", "123")
+            database = MemcachedDatabase()
+
+            with self.assertRaises(CouldNotSetValueBecauseOfCuncurrency):
+                database.add_robot(new_robot, 1, 1)
+
+        finally:
+            # Setting back the original cas method.
+            mc_connection.cas = original_cas
+
+        # Checking to see added robot is clearly rolled back.
+        self.assertFalse(mc_connection.get(new_robot.get_id()))
