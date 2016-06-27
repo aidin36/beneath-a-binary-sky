@@ -58,7 +58,7 @@ class MemcachedDatabase:
         try:
             self._add_robot_to_all_list(robot_object.get_id())
         except Exception:
-            # Rolling back previoys add.
+            # Rolling back previous add.
             mc_connection.delete(robot_object.get_id())
             raise
 
