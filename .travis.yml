@@ -12,7 +12,7 @@ services:
 install:
   - pip install pylibmc
   - pip install coverage
-  - pip install coverall
+  - pip install coveralls
 
 script:
   coverage run ./tests/start.py
