@@ -18,3 +18,6 @@
 
 class DatabaseException(Exception):
     '''Base of errors in the database module.'''
+
+class CouldNotSetValueBecauseOfCuncurrency(DatabaseException):
+    '''Raises if concurrent requests doesn't allow the database to set a value.'''

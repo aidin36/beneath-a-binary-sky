@@ -16,7 +16,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from database.memcached_database import MemcachedDatabase
-
+from database.lock import Lock
 
 class World:
 
@@ -31,4 +31,5 @@ class World:
         @param y: Location of the robot (Y)
         '''
         # TODO: Check for blocking objects.
-        self._database.add_robot(robot, x, y)
+        with Lock("{0},{1}".format(x, y)):
+            self._database.add_robot(robot, x, y)

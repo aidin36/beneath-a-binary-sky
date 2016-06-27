@@ -29,8 +29,11 @@ def main():
     # Waiting for the memcache to start.
     time.sleep(0.2)
 
-    # Initializing a fake database.
+    # Initializing the database.
     database = MemcachedDatabase()
+    database.initialize()
+
+    # Addin a robot, just for testing.
     database.add_robot(Robot("jfhdieu82839", "123"), 2, 1)
 
     # Actually starting the application.

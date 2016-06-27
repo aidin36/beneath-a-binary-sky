@@ -29,6 +29,12 @@ def main():
     # Running new instance of memcached.
     memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", "11536"])
 
+    # Initializing the database.
+    from database.memcached_database import MemcachedDatabase
+    database = MemcachedDatabase()
+    database.initialize()
+
+    # Running tests.
     loader = unittest.TestLoader()
     test_suit = loader.discover(current_module_directory)
     result = unittest.runner.TextTestRunner().run(test_suit)

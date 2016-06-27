@@ -50,5 +50,8 @@ class AddRobotTest(unittest.TestCase):
 
         self.assertEqual(gotted_robot.get_alive(), robot.get_alive())
 
+        all_robots = database.get_all_robot_ids()
+        self.assertIn(robot.get_id(), all_robots)
+
     # TODO: Add this test after completion of the world class.
 #    def test_blocked_location(self):

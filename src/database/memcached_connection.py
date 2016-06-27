@@ -23,8 +23,11 @@ from utils.singleton import Singleton
 class MemcachedConnection(Singleton):
     
     def _initialize(self):
+
+        # CAS behaviour will help us handling concurrency.
         self._mc_client = pylibmc.Client(["127.0.0.1:11536"],
-                                         binary=True)
+                                         binary=True,
+                                         behaviors={'cas': 1})
 
     def get_connection(self):
         return self._mc_client
