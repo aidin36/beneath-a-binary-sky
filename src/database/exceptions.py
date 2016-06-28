@@ -38,3 +38,6 @@ class InvalidPasswordError(DatabaseException):
 
 class DuplicatedPasswordError(DatabaseException):
     '''Raises if a password is already exists on the database.'''
+
+class InvalidLocationError(DatabaseException):
+    '''Raises if the specified location is invalid.'''

@@ -20,7 +20,7 @@ import unittest
 from objects.robot import Robot
 from world.world import World
 from database.memcached_database import MemcachedDatabase
-from database.exceptions import CannotAddRobotError
+from database.exceptions import CannotAddRobotError, InvalidLocationError
 
 
 class AddRobotTest(unittest.TestCase):
@@ -53,6 +53,13 @@ class AddRobotTest(unittest.TestCase):
 
         all_robots = database.get_all_robot_ids()
         self.assertIn(robot.get_id(), all_robots)
+
+    def test_invalid_location(self):
+        '''Tests adding a robot to an invalid location.'''
+        robot = Robot("invalid_location_robot_1863", "123")
+
+        with self.assertRaises(InvalidLocationError):
+            self._world.add_robot(robot, 19872, 1190)
 
     # TODO: Add this test after completion of the world class.
 #    def test_blocked_location(self):

@@ -18,11 +18,13 @@
 import time
 
 from database.memcached_connection import MemcachedConnection
+from database.lock import Lock
 import database.exceptions as exceptions
 
 
 PASSWORD_PREFIX = "P_"
 ROBOT_PREFIX = "R_"
+MAP_SQUARE_PREFIX = "S_"
 
 
 class MemcachedDatabase:
@@ -32,6 +34,35 @@ class MemcachedDatabase:
         mc_connection = MemcachedConnection().get_connection()
 
         mc_connection.add("all_robots", [])
+
+    def add_square_row(self, row, y):
+        '''Adds a row of squares to the map.
+
+        @param row: A list of MapSqare.
+        @param y: The row these squares should be added.
+        '''
+        mc_connection = MemcachedConnection().get_connection()
+
+        x = 0
+        for square in row:
+            result = mc_connection.add("{0}{1},{2}".format(MAP_SQUARE_PREFIX, x, y), square)
+            if not result:
+                raise exceptions.DatabaseException("A square is already exists in location {0},{1}!".format(x, y))
+            x += 1
+
+    def get_square(self, x, y):
+        '''Gets a map square.'''
+
+        mc_connection = MemcachedConnection().get_connection()
+
+        square_id = "{0}{1},{2}".format(MAP_SQUARE_PREFIX, x, y)
+
+        result = mc_connection.get(square_id)
+
+        if result is None:
+            raise exceptions.InvalidLocationError("Location {0},{1} is not valid.".format(x, y))
+
+        return result
 
     def add_robot(self, robot_object, x, y):
         '''Adds the new robot object to the specified position.
@@ -50,8 +81,14 @@ class MemcachedDatabase:
 
         try:
             self._add_robot_to_all_list(robot_object.get_id())
+
+            self._add_robot_to_location(robot_object.get_id(), x, y)
         except Exception:
             # Rolling back previous add.
+            # Note that changes to `all_list' didn't rolled back. Because it have a very low chance
+            # that `add_robot_to_location' fails, unless there's something really wrong. And also
+            # if this happen, nothing will goes wrong, because later we checked for the validity
+            # of `all_robots' list.
             mc_connection.delete("{0}{1}".format(ROBOT_PREFIX, robot_object.get_id()))
             raise
 
@@ -70,7 +107,11 @@ class MemcachedDatabase:
         return result
 
     def get_all_robot_ids(self):
-        '''Gets a list of all robot IDs exists in the database.'''
+        '''Gets a list of all robot IDs exists in the database.
+
+        @note There's a little chance that some of the robots in this list
+        no longer exists.
+        '''
         mc_connection = MemcachedConnection().get_connection()
 
         return mc_connection.get("all_robots")
@@ -120,3 +161,22 @@ class MemcachedDatabase:
 
         # We couldn't set it, after seven tries.
         raise exceptions.CouldNotSetValueBecauseOfConcurrency("Could not update `all_robots' object.")
+
+    def _add_robot_to_location(self, robot_id, x, y):
+        '''Adds the specified robot ID to the specified location on the map.'''
+        mc_connection = MemcachedConnection().get_connection()
+
+        location_id = "{0}{1},{2}".format(MAP_SQUARE_PREFIX, x, y)
+        map_square = mc_connection.get(location_id)
+
+        if map_square is None:
+            # This exception should never happen!
+            raise exceptions.InvalidLocationError("MapSquare object on {0},{1} not found!".format(x, y))
+
+        map_square.set_robot_id(robot_id)
+
+        result = mc_connection.set(location_id, map_square)
+
+        if not result: # pragma: no cover
+            raise exceptions.DatabaseException(
+                "Could not update the location {0},{1}. There's something wrong with the database!".format(x, y))

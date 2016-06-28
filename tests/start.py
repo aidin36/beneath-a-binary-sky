@@ -33,10 +33,21 @@ def main():
     # Sleeping a little, to ensure Memcached is started.
     time.sleep(0.2)
 
-    # Initializing the database.
+    # Initializing the database with a 10x10 world.
     from database.memcached_database import MemcachedDatabase
+    from objects.map_square import MapSquare
+    from objects.map_square_types import MapSquareTypes
+
     database = MemcachedDatabase()
     database.initialize()
+
+    soil_square = MapSquare(MapSquareTypes.SOIL)
+    row = []
+    for x in range(10):
+        row.append(soil_square)
+
+    for y in range(10):
+        database.add_square_row(row, y)
 
     # Running tests.
     loader = unittest.TestLoader()
