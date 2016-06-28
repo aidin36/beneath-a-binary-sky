@@ -22,6 +22,7 @@ import database.exceptions as exceptions
 
 
 PASSWORD_PREFIX = "P_"
+ROBOT_PREFIX = "R_"
 
 
 class MemcachedDatabase:
@@ -40,7 +41,8 @@ class MemcachedDatabase:
         '''
         mc_connection = MemcachedConnection().get_connection()
 
-        result = mc_connection.add(robot_object.get_id(), robot_object)
+        result = mc_connection.add("{0}{1}".format(ROBOT_PREFIX, robot_object.get_id()),
+                                   robot_object)
 
         if not result:
             error_message = "Robot {0} is already exists, or there's something wrong with the database."
@@ -50,7 +52,7 @@ class MemcachedDatabase:
             self._add_robot_to_all_list(robot_object.get_id())
         except Exception:
             # Rolling back previous add.
-            mc_connection.delete(robot_object.get_id())
+            mc_connection.delete("{0}{1}".format(ROBOT_PREFIX, robot_object.get_id()))
             raise
 
     def get_robot(self, robot_id):
@@ -60,7 +62,7 @@ class MemcachedDatabase:
         '''
         mc_connection = MemcachedConnection().get_connection()
 
-        result = mc_connection.get(robot_id)
+        result = mc_connection.get("{0}{1}".format(ROBOT_PREFIX, robot_id))
 
         if result is None:
             raise exceptions.RobotNotFoundError("Robot {0} not found.".format(robot_id))
