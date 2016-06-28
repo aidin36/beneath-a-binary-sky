@@ -37,7 +37,7 @@ class MemcachedDatabase:
         '''Adds the new robot object to the specified position.
 
         @raise CannotAddRobotError
-        @raise CouldNotSetValueBecauseOfCuncurrency
+        @raise CouldNotSetValueBecauseOfConcurrency
         '''
         mc_connection = MemcachedConnection().get_connection()
 
@@ -119,4 +119,4 @@ class MemcachedDatabase:
             time.sleep(0.02)
 
         # We couldn't set it, after seven tries.
-        raise exceptions.CouldNotSetValueBecauseOfCuncurrency("Could not update `all_robots' object.")
+        raise exceptions.CouldNotSetValueBecauseOfConcurrency("Could not update `all_robots' object.")

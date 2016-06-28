@@ -20,7 +20,7 @@ import unittest.mock
 
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import CannotAddRobotError
-from database.exceptions import CouldNotSetValueBecauseOfCuncurrency
+from database.exceptions import CouldNotSetValueBecauseOfConcurrency
 from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot
 
@@ -67,7 +67,7 @@ class TestAddRobot(unittest.TestCase):
             new_robot = Robot("test_concurrent_add_failure_9865", "123")
             database = MemcachedDatabase()
 
-            with self.assertRaises(CouldNotSetValueBecauseOfCuncurrency):
+            with self.assertRaises(CouldNotSetValueBecauseOfConcurrency):
                 database.add_robot(new_robot, 1, 1)
 
         finally:
