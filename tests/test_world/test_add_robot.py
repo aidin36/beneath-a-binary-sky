@@ -19,7 +19,8 @@ import unittest
 
 from objects.robot import Robot
 from world.world import World
-from database.memcached_database import CannotAddRobotError, MemcachedDatabase
+from database.memcached_database import MemcachedDatabase
+from database.exceptions import CannotAddRobotError
 
 
 class AddRobotTest(unittest.TestCase):

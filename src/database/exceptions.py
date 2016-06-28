@@ -19,5 +19,22 @@
 class DatabaseException(Exception):
     '''Base of errors in the database module.'''
 
+class CannotAddRobotError(DatabaseException):
+    '''Raises when there is a problem for adding a robot to the database.
+    Common causes:
+        Robot ID is already exists.
+        Memcached is not started.
+        Memory is full.
+    '''
+
+class RobotNotFoundError(DatabaseException):
+    '''Raises if a robot cannot be found on the database.'''
+
 class CouldNotSetValueBecauseOfCuncurrency(DatabaseException):
     '''Raises if concurrent requests doesn't allow the database to set a value.'''
+
+class InvalidPasswordError(DatabaseException):
+    '''Raises if poping a password requested, but it does not exists.'''
+
+class DuplicatedPasswordError(DatabaseException):
+    '''Raises if a password is already exists on the database.'''

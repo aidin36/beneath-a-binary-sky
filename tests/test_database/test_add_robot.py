@@ -18,7 +18,8 @@
 import unittest
 import unittest.mock
 
-from database.memcached_database import MemcachedDatabase, CannotAddRobotError
+from database.memcached_database import MemcachedDatabase
+from database.exceptions import CannotAddRobotError
 from database.exceptions import CouldNotSetValueBecauseOfCuncurrency
 from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot

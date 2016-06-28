@@ -20,7 +20,7 @@ import unittest
 import actions.exceptions
 from actions.action_manager import ActionManager
 from database.memcached_database import MemcachedDatabase
-from database.memcached_database import RobotNotFoundError
+from database.exceptions import RobotNotFoundError
 from database.lock import LockAlreadyAquiredError
 from security.authenticator import AuthenticationFailedError
 from objects.robot import Robot

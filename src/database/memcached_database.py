@@ -18,19 +18,10 @@
 import time
 
 from database.memcached_connection import MemcachedConnection
-from database.exceptions import DatabaseException, CouldNotSetValueBecauseOfCuncurrency
+import database.exceptions as exceptions
 
 
-class CannotAddRobotError(DatabaseException):
-    '''Raises when there is a problem for adding a robot to the database.
-    Common causes:
-        Robot ID is already exists.
-        Memcached is not started.
-        Memory is full.
-    '''
-
-class RobotNotFoundError(DatabaseException):
-    '''Raises if a robot cannot be found on the database.'''
+PASSWORD_PREFIX = "P_"
 
 
 class MemcachedDatabase:
@@ -53,7 +44,7 @@ class MemcachedDatabase:
 
         if not result:
             error_message = "Robot {0} is already exists, or there's something wrong with the database."
-            raise CannotAddRobotError(error_message.format(robot_object.get_id()))
+            raise exceptions.CannotAddRobotError(error_message.format(robot_object.get_id()))
 
         try:
             self._add_robot_to_all_list(robot_object.get_id())
@@ -72,7 +63,7 @@ class MemcachedDatabase:
         result = mc_connection.get(robot_id)
 
         if result is None:
-            raise RobotNotFoundError("Robot {0} not found.".format(robot_id))
+            raise exceptions.RobotNotFoundError("Robot {0} not found.".format(robot_id))
 
         return result
 
@@ -81,14 +72,6 @@ class MemcachedDatabase:
         mc_connection = MemcachedConnection().get_connection()
 
         return mc_connection.get("all_robots")
-
-    def get_ui_password(self):
-        '''
-        '''
-
-    def set_ui_password(self):
-        '''
-        '''
 
     def _add_robot_to_all_list(self, robot_id):
         '''Adds a robot to the list of all robot IDs.'''
@@ -109,4 +92,4 @@ class MemcachedDatabase:
             time.sleep(0.02)
 
         # We couldn't set it, after seven tries.
-        raise CouldNotSetValueBecauseOfCuncurrency("Could not update `all_robots' object.")
+        raise exceptions.CouldNotSetValueBecauseOfCuncurrency("Could not update `all_robots' object.")
