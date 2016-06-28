@@ -15,12 +15,17 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from database.memcached_database import MemcachedDatabase
+
 
 class AuthenticationFailedError(Exception):
     '''Raises if a robot could not be authenticated.'''
 
 
 class Authenticator:
+
+    def __init__(self):
+        self._database = MemcachedDatabase()
 
     def authenticate_robot(self, robot_object, password):
         '''Authenticate the robot access and its password.'''
@@ -34,3 +39,13 @@ class Authenticator:
 
         if not robot_object.get_alive():
             raise AuthenticationFailedError("Robot {0} is dead!".format(robot_object.get_id()))
+
+    def authenticate_new_robot(self, password):
+        '''Authenticate if this password is valid for a new robot to join the game
+        (e.g. born).
+        It remove the password from the database. i.e. the password can use for
+        only one born.
+
+        @raise InvalidPasswordError: If password wasn't valid.
+        '''
+        self._database.pop_password(password)

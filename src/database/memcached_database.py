@@ -73,6 +73,31 @@ class MemcachedDatabase:
 
         return mc_connection.get("all_robots")
 
+    def add_password(self, password):
+        '''Adds the specified password to the database.'''
+        mc_connection = MemcachedConnection().get_connection()
+
+        result = mc_connection.add("{0}{1}".format(PASSWORD_PREFIX, password), 1)
+
+        if not result:
+            raise exceptions.DuplicatedPasswordError()
+
+    def pop_password(self, password):
+        '''Removes a password from database.
+
+        This operation is atomic, no concurrency will happen.
+
+        @raise InvalidPasswordError: If password not found.
+        '''
+        mc_connection = MemcachedConnection().get_connection()
+
+        password_key = "{0}{1}".format(PASSWORD_PREFIX, password)
+
+        result = mc_connection.delete(password_key)
+
+        if not result:
+            raise exceptions.InvalidPasswordError()
+
     def _add_robot_to_all_list(self, robot_id):
         '''Adds a robot to the list of all robot IDs.'''
         mc_connection = MemcachedConnection().get_connection()
