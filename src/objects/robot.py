@@ -21,6 +21,8 @@ class Robot:
         self._id = id
         self._alive = True
         self._password = password
+        self._x = 0
+        self._y = 0
 
     def get_id(self):
         return self._id
@@ -33,3 +35,11 @@ class Robot:
 
     def get_password(self):
         return self._password
+
+    def get_location(self):
+        '''Returns a tuple containing (x, y)'''
+        return (self._x, self._y)
+
+    def set_location(self, x, y):
+        self._x = x
+        self._y = y

@@ -23,6 +23,11 @@ class World:
     def __init__(self):
         self._database = MemcachedDatabase()
 
+    def get_size(self):
+        '''Returns size of the world.'''
+        # TODO: World size.
+        return (9, 9)
+
     def add_robot(self, robot, x, y):
         '''Adds a robot to the world.
 
