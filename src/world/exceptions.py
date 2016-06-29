@@ -14,3 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
+
+
+class InvalidWorldFileError(Exception):
+    '''Raises if there's something wrong with the specified world file.'''
