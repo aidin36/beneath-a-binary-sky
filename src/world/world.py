@@ -48,6 +48,7 @@ class World(Singleton):
 
                     # Checking if something blocked this square.
                     if not square_object.is_blocking():
+                        robot.set_location(square_x, square_y)
                         self._database.add_robot(robot, square_x, square_y)
                         # Done.
                         return
