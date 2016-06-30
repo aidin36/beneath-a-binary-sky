@@ -30,7 +30,7 @@ class CannotAddRobotError(DatabaseException):
 class RobotNotFoundError(DatabaseException):
     '''Raises if a robot cannot be found on the database.'''
 
-class CouldNotSetValueBecauseOfConcurrency(DatabaseException):
+class CouldNotSetValueBecauseOfConcurrencyError(DatabaseException):
     '''Raises if concurrent requests doesn't allow the database to set a value.'''
 
 class InvalidPasswordError(DatabaseException):

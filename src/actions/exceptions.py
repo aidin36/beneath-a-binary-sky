@@ -19,5 +19,5 @@
 class InvalidArgumentsError(Exception):
     '''Raises if arguments of an action are not correct.'''
 
-class InvalidAction(Exception):
+class InvalidActionError(Exception):
     '''Raises when specified action does not exists or invalid.'''

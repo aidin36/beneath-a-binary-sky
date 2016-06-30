@@ -53,11 +53,11 @@ class ActionManager:
     def _get_action_handler(self, action_type):
         '''Returns instance that should handle this action.'''
         if not isinstance(action_type, str):
-            raise exceptions.InvalidAction("Action type must be str, not {0}".format(type(action_type)))
+            raise exceptions.InvalidActionError("Action type must be str, not {0}".format(type(action_type)))
 
         handler = self._actions.get(action_type)
 
         if handler is None:
-            raise exceptions.InvalidAction("Action {0} does not exists.".format(action_type))
+            raise exceptions.InvalidActionError("Action {0} does not exists.".format(action_type))
 
         return handler

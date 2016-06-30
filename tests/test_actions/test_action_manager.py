@@ -70,22 +70,22 @@ class TestActionManager(unittest.TestCase):
         '''Test wrong action IDs.'''
         # To avoid locking error, a robot is created for each test.
 
-        with self.assertRaises(actions.exceptions.InvalidAction):
+        with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_1", "123")
             self._database.add_robot(robot, 4, 1)
             self._action_manager.do_action("123", "not-exist-action", ["test_bad_actions_2376_1"])
 
-        with self.assertRaises(actions.exceptions.InvalidAction):
+        with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_2", "123")
             self._database.add_robot(robot, 4, 2)
             self._action_manager.do_action("123", 5432, ["test_bad_actions_2376_2"])
 
-        with self.assertRaises(actions.exceptions.InvalidAction):
+        with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_3", "123")
             self._database.add_robot(robot, 4, 3)
             self._action_manager.do_action("123", None, ["test_bad_actions_2376_3"])
 
-        with self.assertRaises(actions.exceptions.InvalidAction):
+        with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_4", "123")
             self._database.add_robot(robot, 4, 4)
             self._action_manager.do_action("123", "", ["test_bad_actions_2376_4"])
