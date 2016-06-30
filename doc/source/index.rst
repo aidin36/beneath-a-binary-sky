@@ -7,6 +7,8 @@ Beneath a Binary Sky
 .. toctree::
   :hidden:
 
+  api
+
 What is it?
 --------------
 
@@ -42,6 +44,4 @@ Key Rules of the World
 * Robots need to gain an amout of honour, in order to gain allowance of giving birth. Honour will be given to the robots who contribute to the society, by making plants reach their maturity.
 
 * All of the amounts mentioned above (initial energy, maximum age of robots, required honour to give birth, etc) are configurable.
-
-
 
