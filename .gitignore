@@ -14,3 +14,6 @@ __pycache__
 
 # Coverage report
 .coverage
+
+# Output of documents
+doc/build
