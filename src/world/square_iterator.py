@@ -24,17 +24,24 @@ class SquareInterator:
     Note that first returning point is the center point itself.
 
     example usage:
-        for x, y in SquareIterator(4, 3, (100, 100))
+        for x, y in SquareIterator((4, 3), (100, 100))
     '''
 
     ITERATION_DIRECTIONS = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
-    def __init__(self, center_point, map_size):
-        '''x, y are the center point.'''
+    def __init__(self, center_point, map_size, max_radios=None):
+        '''
+        @param center_point: Point to iterate around.
+        @param map_size: Size of the current map (world).
+        @keyword max_radios: If provided, it iterates to this maximum distance
+            from the center. For example, if center is on Y 3, and max_radios is
+            2, it will goes up to Y 5.
+        '''
         self._center_x = center_point[0]
         self._center_y = center_point[1]
         self._map_size_x = map_size[0]
         self._map_size_y = map_size[1]
+        self._max_raios = max_radios
 
     def __iter__(self):
         return next(self)
@@ -76,4 +83,8 @@ class SquareInterator:
 
             if not square_found:
                 # If nothing found after a complete loop (e.g. we iterate all possible points.)
+                raise StopIteration()
+
+            if self._max_raios is not None and (length / 2) >= self._max_raios:
+                # We iterated to the maximum requested radios.
                 raise StopIteration()
