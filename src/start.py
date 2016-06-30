@@ -20,12 +20,13 @@ import subprocess
 import time
 
 from database.memcached_database import MemcachedDatabase
+from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot
 
 
 def main():
     # Running new instance of memcached.
-    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", "11536"])
+    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", MemcachedConnection.DEFAULT_PORT])
     # Waiting for the memcache to start.
     time.sleep(0.2)
 

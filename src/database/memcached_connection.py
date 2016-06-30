@@ -21,11 +21,17 @@ from utils.singleton import Singleton
 
 
 class MemcachedConnection(Singleton):
-    
+
+    DEFAULT_PORT = "11536"
+
     def _initialize(self):
+        self.config_connection(MemcachedConnection.DEFAULT_PORT)
+
+    def config_connection(self, database_port):
+        '''Configures a new connection, and will use that.'''
 
         # CAS behaviour will help us handling concurrency.
-        self._mc_client = pylibmc.Client(["127.0.0.1:11536"],
+        self._mc_client = pylibmc.Client(["127.0.0.1:{0}".format(database_port)],
                                          binary=True,
                                          behaviors={'cas': 1})
 

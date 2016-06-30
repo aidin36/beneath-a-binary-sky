@@ -28,7 +28,8 @@ def main():
     sys.path.insert(0, os.path.join(current_module_directory, '..', 'src'))
 
     # Running new instance of memcached.
-    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", "11536"])
+    from database.memcached_connection import MemcachedConnection
+    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", MemcachedConnection.DEFAULT_PORT])
 
     # Sleeping a little, to ensure Memcached is started.
     time.sleep(0.2)
