@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API of the World Server &mdash; Beneath a Binary Sky</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Beneath a Binary Sky" href="index.html" />
+    <link rel="prev" title="Beneath a Binary Sky" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Beneath a Binary Sky"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Beneath a Binary Sky</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-of-the-world-server">
+<h1>API of the World Server<a class="headerlink" href="#api-of-the-world-server" title="Permalink to this headline">¶</a></h1>
+<p>This document explains the API that a robot should use to interact with the server.</p>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>If any errors occur, client will receive a dictionary like these:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+ <span class="nt">&quot;error_code&quot;</span><span class="p">:</span> <span class="s2">&quot;AuthenticationFailedError&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;error_message&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrong password for Robot 6542.6.876&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Error Code</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>InvalidJSONError</td>
+<td>The JSON client sent is in a wrong format, or missed some mandatory fields.</td>
+</tr>
+<tr class="row-odd"><td>InvalidHttpMethodError</td>
+<td>Server only accepts POST HTTP method. Client will receive this error if it tries to use other method.</td>
+</tr>
+<tr class="row-even"><td>InvalidArgumentsError</td>
+<td>Raises if arguments of an action (command) are not correct.</td>
+</tr>
+<tr class="row-odd"><td>InvalidActionError</td>
+<td>Raises when specified command (action) does not exists or invalid.</td>
+</tr>
+<tr class="row-even"><td>DatabaseException</td>
+<td>Normally, client shouldn&#8217;t receive this error. Most of the times, it means there&#8217;s something wrong with the server.</td>
+</tr>
+<tr class="row-odd"><td>CannotAddRobotError</td>
+<td><p class="first">Raises when there is a problem for adding a robot to the database.
+Common causes:</p>
+<blockquote class="last">
+<div>Robot ID is already exists.
+Memcached is not started.
+Memory is full.</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"><td>RobotNotFoundError</td>
+<td>Raises if a robot cannot be found on the database. Usually, because the provided robot ID is wrong.</td>
+</tr>
+<tr class="row-odd"><td>CouldNotSetValueBecauseOfConcurrencyError</td>
+<td>Raises if two or more concurrent requests received by server and it couldn&#8217;t handle it. Upon receiving this, client should retry its previous request.</td>
+</tr>
+<tr class="row-even"><td>InvalidPasswordError</td>
+<td>Specified password is wrong.</td>
+</tr>
+<tr class="row-odd"><td>InvalidLocationError</td>
+<td>Specified location is not valid. For example, it&#8217;s out of the world.</td>
+</tr>
+<tr class="row-even"><td>LockAlreadyAquiredError</td>
+<td>Two or more concurrent requests happened and server couldn&#8217;t handle it. Client should retry its action.</td>
+</tr>
+<tr class="row-odd"><td>AuthenticationFailedError</td>
+<td>Raises if a robot could not be authenticated. i.e. it&#8217;s password is wrong, or it&#8217;s dead.</td>
+</tr>
+<tr class="row-even"><td>WorldIsFullError</td>
+<td>Normally, it shouldn&#8217;t happen! If it is, it means all the world is filled with blocking objects. No one can move!</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Beneath a Binary Sky</a></h1>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=aidin36&repo=beneath-a-binary-sky&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API of the World Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Aidin Gharibnavaz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
