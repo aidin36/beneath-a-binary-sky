@@ -31,28 +31,30 @@ def main():
     from database.memcached_connection import MemcachedConnection
     memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", MemcachedConnection.DEFAULT_PORT])
 
-    # Sleeping a little, to ensure Memcached is started.
-    time.sleep(0.2)
+    try:
+        # Sleeping a little, to ensure Memcached is started.
+        time.sleep(0.2)
 
-    # Initializing the database.
-    from database.memcached_database import MemcachedDatabase
+        # Initializing the database.
+        from database.memcached_database import MemcachedDatabase
 
-    database = MemcachedDatabase()
-    database.initialize()
+        database = MemcachedDatabase()
+        database.initialize()
 
-    # Initializing a small world.
-    from world.world import World
+        # Initializing a small world.
+        from world.world import World
 
-    world = World()
-    world.load_from_file(os.path.join(current_module_directory, "..", "sample_configs", "small.world"))
+        world = World()
+        world.load_from_file(os.path.join(current_module_directory, "..", "sample_configs", "small.world"))
 
-    # Running tests.
-    loader = unittest.TestLoader()
-    test_suit = loader.discover(current_module_directory)
-    result = unittest.runner.TextTestRunner().run(test_suit)
+        # Running tests.
+        loader = unittest.TestLoader()
+        test_suit = loader.discover(current_module_directory)
+        result = unittest.runner.TextTestRunner().run(test_suit)
 
-    # Terminating previously started memcached.
-    memcached_process.terminate()
+    finally:
+        # Terminating previously started memcached.
+        memcached_process.terminate()
 
     # Setting exit code, so automated scripts would now that tests are failed.
     if not result.wasSuccessful():

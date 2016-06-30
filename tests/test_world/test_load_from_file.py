@@ -44,7 +44,7 @@ class TestLoadFromFile(unittest.TestCase):
     def setUp(self):
         # Starting a new database on a random port.
         port = random.randrange(11600, 11700)
-        memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", str(port)])
+        self._memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", str(port)])
 
         # Waiting for the memcache to start.
         time.sleep(0.2)
@@ -55,6 +55,8 @@ class TestLoadFromFile(unittest.TestCase):
     def tearDown(self):
         # Resetting database to its default port.
         MemcachedConnection().config_connection(MemcachedConnection.DEFAULT_PORT)
+
+        self._memcached_process.terminate()
 
     def test_invalid_length(self):
         '''Tests with a file that one of it's row's length is invalid.'''
