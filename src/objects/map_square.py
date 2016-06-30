@@ -15,6 +15,8 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from objects.map_square_types import MapSquareTypes
+
 
 class MapSquare:
 
@@ -43,3 +45,6 @@ class MapSquare:
         '''Returns the plant that lives on this square.'''
         return self._plant
 
+    def is_blocking(self):
+        '''Returns True if a robot cannot walk into this square. Returns false otherwise.'''
+        return (self._type == MapSquareTypes.ROCK or self._robot_id is not None)

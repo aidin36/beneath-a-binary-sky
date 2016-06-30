@@ -57,8 +57,8 @@ class PopulationControl:
             born_location = parent_robot.get_location()
         else:
             world_size = self._world.get_size()
-            born_location = (random.randint(0, world_size[0]),
-                             random.randint(0, world_size[1]))
+            born_location = (random.randint(0, world_size[0] - 1),
+                             random.randint(0, world_size[1] - 1))
 
         self._authenticator.authenticate_new_robot(password)
 

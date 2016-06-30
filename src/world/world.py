@@ -18,8 +18,10 @@
 import world.exceptions as exceptions
 from objects.map_square import MapSquare
 from database.memcached_database import MemcachedDatabase
-from database.lock import Lock
+from database.lock import Lock, LockAlreadyAquiredError
 from utils.singleton import Singleton
+from world.square_iterator import SquareInterator
+
 
 class World(Singleton):
 
@@ -33,14 +35,28 @@ class World(Singleton):
 
     def add_robot(self, robot, x, y):
         '''Adds a robot to the world.
+        It tries to find the nearest empty point to the specified point.
 
         @param robot: Instance of objects.robot.Robot.
-        @param x: Location of the robot (X)
-        @param y: Location of the robot (Y)
+        @param x: Location to try to add the robot. (X)
+        @param y: Location to try to add the robot. (Y)
         '''
-        # TODO: Check for blocking objects.
-        with Lock("{0},{1}".format(x, y)):
-            self._database.add_robot(robot, x, y)
+        for square_x, square_y in SquareInterator((x, y), self._size):
+            try:
+                with Lock("{0},{1}".format(square_x, square_y)):
+                    square_object = self._database.get_square(square_x, square_y)
+
+                    # Checking if something blocked this square.
+                    if not square_object.is_blocking():
+                        self._database.add_robot(robot, square_x, square_y)
+                        # Done.
+                        return
+
+            except LockAlreadyAquiredError:
+                # If this square was locked, go to the next one.
+                continue
+
+        raise exceptions.WorldIsFullError("No free location is remained in the world!")
 
     def load_from_file(self, file_path):
         '''Loads a world from the specified file.'''

@@ -15,9 +15,20 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import unittest
+from world.square_iterator import SquareInterator
 
-class InvalidWorldFileError(Exception):
-    '''Raises if there's something wrong with the specified world file.'''
 
-class WorldIsFullError(Exception):
-    '''Raises if no free square is available in the world!'''
+class TestSquareIterator(unittest.TestCase):
+
+    def test_against_predefined_result(self):
+        '''Tests the iterator against hard-coded result.'''
+
+        expected_result = [(1, 1),
+                           (1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), (0, 1), (0, 0),
+                           (3, 0), (3, 1), (3, 2), (3, 3), (2, 3), (1, 3), (0, 3)]
+
+        counter = 0
+        for point in SquareInterator((1, 1), (4, 4)):
+            self.assertEqual(expected_result[counter], point)
+            counter += 1
