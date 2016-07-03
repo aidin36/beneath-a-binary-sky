@@ -29,9 +29,12 @@ class TestBorn(unittest.TestCase):
         population_control = PopulationControl()
         database = MemcachedDatabase()
 
-        database.add_password("98176.12374.198")
+        database.add_password("iujeh87UYh6512ewQ")
 
-        population_control.execute_command("98176.12374.198", "born", [])
+        robot_info = population_control.execute_command("iujeh87UYh6512ewQ", "born", [])
+        database.commit()
+
+        database.get_robot(robot_info['robot_id'])
 
     def test_wrong_password(self):
         '''Tests borning a robot with wrong password.'''

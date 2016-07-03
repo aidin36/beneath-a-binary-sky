@@ -59,6 +59,24 @@ class World(Singleton):
 
         raise exceptions.WorldIsFullError("No free location is remained in the world!")
 
+    def move_robot(self, robot, destination):
+        '''Moves a robot to the specified location.
+
+        @param destination: A tuple of (x, y)
+        '''
+        # TODO: Check for the map boundaries.
+        # Locking both origin and destination.
+        origin = robot.get_location()
+        with Lock("{0},{1}".format(*origin)):
+            with Lock("{0},{1}".format(*destination)):
+                origin_square = self._database.get_square(*origin)
+                destination_square = self._database.get_square(*destination)
+
+                origin_square.set_robot_id(None)
+                destination_square.set_robot_id(robot.get_id())
+
+                robot.set_location(*destination)
+
     def load_from_file(self, file_path):
         '''Loads a world from the specified file.'''
         with open(file_path, 'r') as world_file:
@@ -93,8 +111,8 @@ class World(Singleton):
                     raise exceptions.InvalidWorldFileError(
                         "Found invalid square in line {0} column {1}.".format(line_number, column_number))
 
-                row.append(MapSquare(square_type))
+                row.append(MapSquare(square_type, (column_number - 1, line_number - 1)))
 
-            self._database.add_square_row(row, line_number - 1)
+            self._database.add_square_row(row)
 
         self._size = (row_length, line_number)

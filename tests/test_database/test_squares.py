@@ -29,12 +29,12 @@ class TestSquares(unittest.TestCase):
         '''Tests an OK scenario.'''
         database = MemcachedDatabase()
 
-        row = [MapSquare(MapSquareTypes.SOIL),
-               MapSquare(MapSquareTypes.WATER),
-               MapSquare(MapSquareTypes.ROCK),
-               MapSquare(MapSquareTypes.SAND)]
+        row = [MapSquare(MapSquareTypes.SOIL, (0, 999)),
+               MapSquare(MapSquareTypes.WATER, (1, 999)),
+               MapSquare(MapSquareTypes.ROCK, (2, 999)),
+               MapSquare(MapSquareTypes.SAND, (3, 999))]
 
-        database.add_square_row(row, 999)
+        database.add_square_row(row)
 
         self.assertEqual(database.get_square(0, 999).get_type(), MapSquareTypes.SOIL)
         self.assertEqual(database.get_square(1, 999).get_type(), MapSquareTypes.WATER)
@@ -45,12 +45,12 @@ class TestSquares(unittest.TestCase):
         '''Tests adding two squares at the same location. Should raise exception.'''
         database = MemcachedDatabase()
 
-        row = [MapSquare(MapSquareTypes.SOIL)]
+        row = [MapSquare(MapSquareTypes.SOIL, (0, 998))]
 
-        database.add_square_row(row, 998)
+        database.add_square_row(row)
 
         with self.assertRaises(DatabaseException):
-            database.add_square_row(row, 998)
+            database.add_square_row(row)
 
     def test_not_exists_square(self):
         '''Tests getting a square that does not exists.'''

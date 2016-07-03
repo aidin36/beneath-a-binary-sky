@@ -15,14 +15,22 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from utils.exceptions import FatalError
+
+
+class DatabaseFatalError(FatalError):
+    '''This raises if something very bad happens to database.
+    For example, if we cannot be sure that its data is still reliable.
+    '''
 
 class DatabaseException(Exception):
     '''Base of errors in the database module.'''
 
-class CannotAddRobotError(DatabaseException):
-    '''Raises when there is a problem for adding a robot to the database.
+class CannotAddObjectError(DatabaseException):
+    '''Raises when there is a problem for adding an object (i.e a robot) to the database.
+
     Common causes:
-        Robot ID is already exists.
+        Object (Robot) ID is already exists.
         Memcached is not started.
         Memory is full.
     '''

@@ -15,36 +15,16 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from objects.base_object import BaseObject
+class BaseObject:
+    '''All the other objects should inherit from this one.'''
 
+    def __init__(self):
+        self._dirty = False
 
-class Robot(BaseObject):
+    def is_dirty(self):
+        '''Returns True if one of the attributes of object changed since its construction.'''
+        return self._dirty
 
-    def __init__(self, id, password):
-        super(Robot, self).__init__()
-
-        self._id = id
-        self._alive = True
-        self._password = password
-        self._x = 0
-        self._y = 0
-
-    def get_id(self):
-        return self._id
-
-    def get_alive(self):
-        return self._alive
-
-    def set_alive(self, alive):
-        self._alive = alive
-
-    def get_password(self):
-        return self._password
-
-    def get_location(self):
-        '''Returns a tuple containing (x, y)'''
-        return (self._x, self._y)
-
-    def set_location(self, x, y):
-        self._x = x
-        self._y = y
+    def __setattr__(self, key, value):
+        super().__setattr__("_dirty", True)
+        super().__setattr__(key, value)

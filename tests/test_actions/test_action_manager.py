@@ -53,6 +53,7 @@ class TestActionManager(unittest.TestCase):
         '''Test if ActionManager authenticate passwords correctly.'''
         robot = Robot("test_invalid_password_95312", "andhue-ifue876-fkdnpw-1")
         self._database.add_robot(robot, 3, 1)
+        self._database.commit()
 
         with self.assertRaises(AuthenticationFailedError):
             self._action_manager.do_action("ieukjdf-ioquiwe-751io", "status", ["test_invalid_password_95312"])
@@ -62,6 +63,7 @@ class TestActionManager(unittest.TestCase):
         robot = Robot("test_dead_robot_98176", "1234")
         robot.set_alive(False)
         self._database.add_robot(robot, 3, 2)
+        self._database.commit()
 
         with self.assertRaises(AuthenticationFailedError):
             self._action_manager.do_action("1234", "status", ["test_dead_robot_98176"])
@@ -73,26 +75,36 @@ class TestActionManager(unittest.TestCase):
         with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_1", "123")
             self._database.add_robot(robot, 4, 1)
+            self._database.commit()
+
             self._action_manager.do_action("123", "not-exist-action", ["test_bad_actions_2376_1"])
 
         with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_2", "123")
             self._database.add_robot(robot, 4, 2)
+            self._database.commit()
+
             self._action_manager.do_action("123", 5432, ["test_bad_actions_2376_2"])
 
         with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_3", "123")
             self._database.add_robot(robot, 4, 3)
+            self._database.commit()
+
             self._action_manager.do_action("123", None, ["test_bad_actions_2376_3"])
 
         with self.assertRaises(actions.exceptions.InvalidActionError):
             robot = Robot("test_bad_actions_2376_4", "123")
             self._database.add_robot(robot, 4, 4)
+            self._database.commit()
+
             self._action_manager.do_action("123", "", ["test_bad_actions_2376_4"])
 
     def test_ok(self):
         '''Execute a fine action.'''
         robot = Robot("test_ok_action_3278", "4467yrt-ddfjh-1u872-oiie")
         self._database.add_robot(robot, 3, 3)
+        self._database.commit()
 
-        self._action_manager.do_action("4467yrt-ddfjh-1u872-oiie", "status", ["test_ok_action_3278"])
+        result = self._action_manager.do_action("4467yrt-ddfjh-1u872-oiie", "status", ["test_ok_action_3278"])
+        self.assertEqual(result['alive'], True)

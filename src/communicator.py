@@ -16,6 +16,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from utils.singleton import Singleton
+from database.memcached_database import MemcachedDatabase
 from actions.action_manager import ActionManager
 from population.population_control import PopulationControl
 
@@ -30,10 +31,18 @@ class Communicator(Singleton):
     def execute_command(self, password, command, args):
         '''Execute client's command.'''
 
-        if command in ["ui", "stats"]:
-            # Admin commands.
-            pass
-        elif command in ["born", "give_birth"]:
-            return self._population_control.execute_command(password, command, args)
+        try:
+            if command in ["ui", "stats"]:
+                # Admin commands.
+                pass
+            elif command in ["born", "give_birth"]:
+                return self._population_control.execute_command(password, command, args)
+            else:
+                return self._action_manager.do_action(password, command, args)
+
+        # Committing or rollbacking all changes after the completion of execution.
+        except Exception:
+            MemcachedDatabase().rollback()
+            raise
         else:
-            return self._action_manager.do_action(password, command, args)
+            MemcachedDatabase().commit()

@@ -18,6 +18,7 @@
 import os
 import random
 
+ROBOT_ID_PREFIX = "R"
 ALL_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-+~!@#$%^&*()_="
 
 class IDGenerator:
@@ -35,7 +36,7 @@ class IDGenerator:
         # Combination of PID and a counter is always unique. But, we add a random number
         # so it can't be easily guess by someone. Yes, it's not very secure, but we
         # don't need that much security anyway!
-        result = "{0}.{1}.{2}".format(self._pid, self._counter, random.randint(0, 999))
+        result = "{0}.{1}.{2}.{3}".format(ROBOT_ID_PREFIX, self._pid, self._counter, random.randint(0, 999))
 
         self._counter += 1
 

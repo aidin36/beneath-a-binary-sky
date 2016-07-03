@@ -23,11 +23,11 @@ InvalidHttpMethodError                     Server only accepts POST HTTP method.
 InvalidArgumentsError                      Raises if arguments of an action (command) are not correct.
 InvalidActionError                         Raises when specified command (action) does not exists or invalid.
 DatabaseException                          Normally, client shouldn't receive this error. Most of the times, it means there's something wrong with the server.
-CannotAddRobotError                        Raises when there is a problem for adding a robot to the database.
+CannotAddObjectError                       Raises when there is a problem for adding an object (i.e a robot) to the database.
                                            Common causes:
-                                               Robot ID is already exists.
-                                               Memcached is not started.
-                                               Memory is full.
+                                              Object (Robot) ID is already exists.
+                                              Memcached is not started.
+                                              Memory is full.
 RobotNotFoundError                         Raises if a robot cannot be found on the database. Usually, because the provided robot ID is wrong.
 CouldNotSetValueBecauseOfConcurrencyError  Raises if two or more concurrent requests received by server and it couldn't handle it. Upon receiving this, client should retry its previous request.
 InvalidPasswordError                       Specified password is wrong.

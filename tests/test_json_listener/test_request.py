@@ -98,7 +98,7 @@ class TestReqiest(unittest.TestCase):
         '''An OK request.'''
         request = {"password": "123",
                    "command": "status",
-                   "args": ["good_request_robot_id"]}
+                   "args": ["good_request_robot_id_09187"]}
 
         result = self.call_application_func(request)
 

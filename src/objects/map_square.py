@@ -15,15 +15,22 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from objects.base_object import BaseObject
 from objects.map_square_types import MapSquareTypes
 
 
-class MapSquare:
+class MapSquare(BaseObject):
 
-    def __init__(self, type):
+    def __init__(self, type, location):
+        super(MapSquare, self).__init__()
+
         self._type = type
         self._robot_id = None
         self._plant = None
+        self._location = location
+
+    def get_id(self):
+        return "{0},{1}".format(*self._location)
 
     def get_type(self):
         '''Gets the type of this square. It would be one of MapSqareTypes.'''

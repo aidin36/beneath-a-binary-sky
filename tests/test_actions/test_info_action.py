@@ -27,9 +27,12 @@ class TestInfoAction(unittest.TestCase):
 
     def test_blind_point(self):
         '''Gets information of a point, but don't care about the result.'''
+        database = MemcachedDatabase()
         new_robot = Robot("1873yudhNCbueio", "ueijdnchiop")
         new_robot.set_location(9, 7)
-        MemcachedDatabase().add_robot(new_robot, 9, 7)
+
+        database.add_robot(new_robot, 9, 7)
+        database.commit()
 
         action_manager = ActionManager()
         info = action_manager.do_action(new_robot.get_password(), "info", [new_robot.get_id()])
@@ -38,9 +41,12 @@ class TestInfoAction(unittest.TestCase):
 
     def test_specific_point(self):
         '''Gets information of a specific point, and check its result.'''
+        database = MemcachedDatabase()
         new_robot = Robot("oie982736hhjf", "lo098173635")
         new_robot.set_location(9, 4)
-        MemcachedDatabase().add_robot(new_robot, 9, 4)
+
+        database.add_robot(new_robot, 9, 4)
+        database.commit()
 
         action_manager = ActionManager()
         info = action_manager.do_action(new_robot.get_password(), "info", [new_robot.get_id()])
@@ -61,9 +67,12 @@ class TestInfoAction(unittest.TestCase):
 
     def test_corner(self):
         '''Tests getting a corner of the map.'''
+        database = MemcachedDatabase()
         new_robot = Robot("0981kdjieu871", "oie987163")
         new_robot.set_location(0, 1)
-        MemcachedDatabase().add_robot(new_robot, 0, 1)
+
+        database.add_robot(new_robot, 0, 1)
+        database.commit()
 
         action_manager = ActionManager()
         info = action_manager.do_action(new_robot.get_password(), "info", [new_robot.get_id()])

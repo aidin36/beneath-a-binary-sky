@@ -17,17 +17,19 @@
 
 import time
 
+from utils.singleton import Singleton
 from database.memcached_connection import MemcachedConnection
-from database.lock import Lock
+from database.transaction import Transaction
 import database.exceptions as exceptions
 
 
 PASSWORD_PREFIX = "P_"
-ROBOT_PREFIX = "R_"
-MAP_SQUARE_PREFIX = "S_"
 
 
-class MemcachedDatabase:
+class MemcachedDatabase(Singleton):
+
+    def _initialize(self):
+        self._current_transaction = None
 
     def initialize(self):
         '''Initializes the database by setting required key-values.'''
@@ -35,27 +37,54 @@ class MemcachedDatabase:
 
         mc_connection.add("all_robots", [])
 
-    def add_square_row(self, row, y):
+    def get_lock(self, lock_key):
+        '''Gets a lock on database.
+        It will be release automatically when transaction commit/rollback.
+        '''
+        transaction = self._get_transaction()
+
+        transaction.get_lock(lock_key)
+
+    def commit(self):
+        '''Commits all changes to database.'''
+        transaction = self._get_transaction()
+
+        try:
+            transaction.commit()
+        finally:
+            self._reset_transaction()
+
+    def rollback(self):
+        '''Rollbacks all the changes so far.
+        After calling this, you should no-longer use objects you received from database.
+        '''
+        transaction = self._get_transaction()
+
+        try:
+            transaction.rollback()
+        finally:
+            self._reset_transaction()
+
+    def add_square_row(self, row):
         '''Adds a row of squares to the map.
 
+        @note: It's not transactional. It changes the database at realtime.
+
         @param row: A list of MapSqare.
-        @param y: The row these squares should be added.
         '''
         mc_connection = MemcachedConnection().get_connection()
 
-        x = 0
         for square in row:
-            result = mc_connection.add("{0}{1},{2}".format(MAP_SQUARE_PREFIX, x, y), square)
+            result = mc_connection.add(square.get_id(), square)
             if not result:
-                raise exceptions.DatabaseException("A square is already exists in location {0},{1}!".format(x, y))
-            x += 1
+                raise exceptions.DatabaseException("A square is already exists in location {0}!".format(square.get_id()))
 
     def get_square(self, x, y):
         '''Gets a map square.'''
 
         mc_connection = MemcachedConnection().get_connection()
 
-        square_id = "{0}{1},{2}".format(MAP_SQUARE_PREFIX, x, y)
+        square_id = "{0},{1}".format(x, y)
 
         result = mc_connection.get(square_id)
 
@@ -70,27 +99,17 @@ class MemcachedDatabase:
         @raise CannotAddRobotError
         @raise CouldNotSetValueBecauseOfConcurrencyError
         '''
-        mc_connection = MemcachedConnection().get_connection()
+        transaction = self._get_transaction()
 
-        result = mc_connection.add("{0}{1}".format(ROBOT_PREFIX, robot_object.get_id()),
-                                   robot_object)
+        transaction.add_object(robot_object)
 
-        if not result:
-            error_message = "Robot {0} is already exists, or there's something wrong with the database."
-            raise exceptions.CannotAddRobotError(error_message.format(robot_object.get_id()))
+        # Note that if any erros happend afterward, changes to `all_list' would not be rolleded
+        # back. Because it have a very little chance that `add_robot_to_location' fails, unless
+        # there's something really wrong. And also if this happen, nothing will goes wrong,
+        # because later we checked for the validity of `all_robots' list.
+        self._add_robot_to_all_list(robot_object.get_id())
 
-        try:
-            self._add_robot_to_all_list(robot_object.get_id())
-
-            self._add_robot_to_location(robot_object.get_id(), x, y)
-        except Exception:
-            # Rolling back previous add.
-            # Note that changes to `all_list' didn't rolled back. Because it have a very low chance
-            # that `add_robot_to_location' fails, unless there's something really wrong. And also
-            # if this happen, nothing will goes wrong, because later we checked for the validity
-            # of `all_robots' list.
-            mc_connection.delete("{0}{1}".format(ROBOT_PREFIX, robot_object.get_id()))
-            raise
+        self._add_robot_to_location(robot_object.get_id(), x, y)
 
     def get_robot(self, robot_id):
         '''Gets the robot object with the specified ID from the database.
@@ -99,7 +118,7 @@ class MemcachedDatabase:
         '''
         mc_connection = MemcachedConnection().get_connection()
 
-        result = mc_connection.get("{0}{1}".format(ROBOT_PREFIX, robot_id))
+        result = mc_connection.get(robot_id)
 
         if result is None:
             raise exceptions.RobotNotFoundError("Robot {0} not found.".format(robot_id))
@@ -117,7 +136,10 @@ class MemcachedDatabase:
         return mc_connection.get("all_robots")
 
     def add_password(self, password):
-        '''Adds the specified password to the database.'''
+        '''Adds the specified password to the database.
+
+        @note: It's not transactional. It will add the password directly to the database.
+        '''
         mc_connection = MemcachedConnection().get_connection()
 
         result = mc_connection.add("{0}{1}".format(PASSWORD_PREFIX, password), 1)
@@ -130,6 +152,9 @@ class MemcachedDatabase:
 
         This operation is atomic, no concurrency will happen.
 
+        @note: It's not transactional. It will pop the password directly
+            from the database.
+
         @raise InvalidPasswordError: If password not found.
         '''
         mc_connection = MemcachedConnection().get_connection()
@@ -140,6 +165,17 @@ class MemcachedDatabase:
 
         if not result:
             raise exceptions.InvalidPasswordError()
+
+    def _get_transaction(self):
+        '''Gets the current transaction.'''
+        if self._current_transaction is None:
+            self._current_transaction = Transaction()
+
+        return self._current_transaction
+
+    def _reset_transaction(self):
+        '''Resets the transaction, so next time, a new transaction will be started.'''
+        self._current_transaction = None
 
     def _add_robot_to_all_list(self, robot_id):
         '''Adds a robot to the list of all robot IDs.'''
@@ -166,7 +202,7 @@ class MemcachedDatabase:
         '''Adds the specified robot ID to the specified location on the map.'''
         mc_connection = MemcachedConnection().get_connection()
 
-        location_id = "{0}{1},{2}".format(MAP_SQUARE_PREFIX, x, y)
+        location_id = "{0},{1}".format(x, y)
         map_square = mc_connection.get(location_id)
 
         if map_square is None:
@@ -175,8 +211,5 @@ class MemcachedDatabase:
 
         map_square.set_robot_id(robot_id)
 
-        result = mc_connection.set(location_id, map_square)
-
-        if not result: # pragma: no cover
-            raise exceptions.DatabaseException(
-                "Could not update the location {0},{1}. There's something wrong with the database!".format(x, y))
+        transaction = self._get_transaction()
+        transaction.store_object(map_square)

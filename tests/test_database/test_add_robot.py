@@ -19,7 +19,7 @@ import unittest
 import unittest.mock
 
 from database.memcached_database import MemcachedDatabase
-from database.exceptions import CannotAddRobotError
+from database.exceptions import CannotAddObjectError
 from database.exceptions import CouldNotSetValueBecauseOfConcurrencyError
 from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot
@@ -35,6 +35,7 @@ class TestAddRobot(unittest.TestCase):
 
         # No exception should be raise.
         database.add_robot(new_robot, 0, 0)
+        database.commit()
 
         gotted_robot = database.get_robot("test_simple_add_")
 
@@ -48,10 +49,12 @@ class TestAddRobot(unittest.TestCase):
 
         new_robot = Robot("test_duplicate_add_", "123")
         database.add_robot(new_robot, 1, 1)
+        database.commit()
 
         robot2 = Robot("test_duplicate_add_", "123")
-        with self.assertRaises(CannotAddRobotError):
+        with self.assertRaises(CannotAddObjectError):
             database.add_robot(robot2, 1, 2)
+            database.commit()
 
     def test_concurrent_add_failure(self):
         '''Tests the behavior of Database class, when concurrent add fails.'''
@@ -69,6 +72,7 @@ class TestAddRobot(unittest.TestCase):
 
             with self.assertRaises(CouldNotSetValueBecauseOfConcurrencyError):
                 database.add_robot(new_robot, 1, 1)
+                database.commit()
 
         finally:
             # Setting back the original cas method.

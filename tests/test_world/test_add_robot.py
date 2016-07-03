@@ -20,7 +20,7 @@ import unittest
 from objects.robot import Robot
 from world.world import World
 from database.memcached_database import MemcachedDatabase
-from database.exceptions import CannotAddRobotError, InvalidLocationError
+from database.exceptions import CannotAddObjectError, InvalidLocationError
 
 
 class AddRobotTest(unittest.TestCase):
@@ -32,21 +32,26 @@ class AddRobotTest(unittest.TestCase):
 
     def test_duplicate(self):
         '''Tests adding duplicate robot.'''
+        database = MemcachedDatabase()
         robot = Robot("world_duplicate_robot_8722", "123")
 
         self._world.add_robot(robot, 5, 1)
 
+        database.commit()
+
         robot_2 = Robot("world_duplicate_robot_8722", "1236")
-        with self.assertRaises(CannotAddRobotError):
+        with self.assertRaises(CannotAddObjectError):
             self._world.add_robot(robot_2, 5, 2)
+            database.commit()
 
     def test_ok(self):
         '''Adds a good robot object to the world.'''
+        database = MemcachedDatabase()
         robot = Robot("world_ok_robot_38364", "123")
 
         self._world.add_robot(robot, 5, 0)
+        database.commit()
 
-        database = MemcachedDatabase()
         gotted_robot = database.get_robot(robot.get_id())
 
         self.assertEqual(gotted_robot.get_alive(), robot.get_alive())
@@ -56,10 +61,12 @@ class AddRobotTest(unittest.TestCase):
 
     def test_invalid_location(self):
         '''Tests adding a robot to an invalid location.'''
+        database = MemcachedDatabase()
         robot = Robot("invalid_location_robot_1863", "123")
 
         with self.assertRaises(InvalidLocationError):
             self._world.add_robot(robot, 19872, 1190)
+            database.commit()
 
     # TODO: Add this test after completion of the world class.
 #    def test_blocked_location(self):
