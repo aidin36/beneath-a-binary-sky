@@ -16,7 +16,6 @@
 # <http://www.gnu.org/licenses/>.
 
 from database.memcached_database import MemcachedDatabase
-from database.lock import Lock
 from security.authenticator import Authenticator
 import actions.exceptions as exceptions
 from actions.status_action import StatusAction
@@ -43,14 +42,13 @@ class ActionManager:
             raise exceptions.InvalidArgumentsError(
                 "First argument (robot_id) should be a string, not {0}".format(type(robot_id)))
 
-        with Lock(robot_id):
-            robot = self._database.get_robot(robot_id)
+        robot = self._database.get_robot(robot_id, for_update=True)
 
-            self._authenticator.authenticate_robot(robot, password)
+        self._authenticator.authenticate_robot(robot, password)
 
-            handler = self._get_action_handler(action_type)
+        handler = self._get_action_handler(action_type)
 
-            return handler.do_action(robot, args)
+        return handler.do_action(robot, args)
 
     def _get_action_handler(self, action_type):
         '''Returns instance that should handle this action.'''

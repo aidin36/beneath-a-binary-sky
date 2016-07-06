@@ -31,6 +31,7 @@ class Transaction:
         self._new_objects = []
         self._locks = []
 
+
     def add_object(self, new_object):
         '''Adds this object to the database on commit.'''
         self._new_objects.append(new_object)

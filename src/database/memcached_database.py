@@ -79,17 +79,32 @@ class MemcachedDatabase(Singleton):
             if not result:
                 raise exceptions.DatabaseException("A square is already exists in location {0}!".format(square.get_id()))
 
-    def get_square(self, x, y):
-        '''Gets a map square.'''
+    def get_square(self, x, y, for_update=False):
+        '''Gets a map square.
+
+        @param for_update: If you want to update this robot (store its
+            changes back to the database) you should set this flag.
+            Note that it automatically updates the changes when
+            `commit' method calls.
+
+        @raise InvalidLocationError
+        @raise LockAlreadyAquiredError
+        '''
+        square_id = "{0},{1}".format(x, y)
+
+        if for_update:
+            self.get_lock(square_id)
 
         mc_connection = MemcachedConnection().get_connection()
-
-        square_id = "{0},{1}".format(x, y)
 
         result = mc_connection.get(square_id)
 
         if result is None:
             raise exceptions.InvalidLocationError("Location {0},{1} is not valid.".format(x, y))
+
+        if for_update:
+            transaction = self._get_transaction()
+            transaction.store_object(result)
 
         return result
 
@@ -103,7 +118,7 @@ class MemcachedDatabase(Singleton):
 
         transaction.add_object(robot_object)
 
-        # Note that if any erros happend afterward, changes to `all_list' would not be rolleded
+        # Note that if any errors happen afterward, changes to `all_list' would not be rolled
         # back. Because it have a very little chance that `add_robot_to_location' fails, unless
         # there's something really wrong. And also if this happen, nothing will goes wrong,
         # because later we checked for the validity of `all_robots' list.
@@ -111,17 +126,31 @@ class MemcachedDatabase(Singleton):
 
         self._add_robot_to_location(robot_object.get_id(), x, y)
 
-    def get_robot(self, robot_id):
+    def get_robot(self, robot_id, for_update=False):
         '''Gets the robot object with the specified ID from the database.
 
+        @param robot_id: ID of the robot to get from database.
+        @param for_update: If you want to update this robot (store its
+            changes back to the database) you should set this flag.
+            Note that it automatically updates the changes when
+            `commit' method calls.
+
         @raise RobotNotFoundError: When no robot found with this ID.
+        @raise LockAlreadyAquiredError
         '''
+        if for_update:
+            self.get_lock(robot_id)
+
         mc_connection = MemcachedConnection().get_connection()
 
         result = mc_connection.get(robot_id)
 
         if result is None:
             raise exceptions.RobotNotFoundError("Robot {0} not found.".format(robot_id))
+
+        if for_update:
+            transaction = self._get_transaction()
+            transaction.store_object(result)
 
         return result
 

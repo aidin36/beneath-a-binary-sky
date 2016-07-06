@@ -18,7 +18,7 @@
 import world.exceptions as exceptions
 from objects.map_square import MapSquare
 from database.memcached_database import MemcachedDatabase
-from database.lock import Lock, LockAlreadyAquiredError
+from database.lock import LockAlreadyAquiredError
 from utils.singleton import Singleton
 from world.square_iterator import SquareInterator
 
@@ -43,15 +43,14 @@ class World(Singleton):
         '''
         for square_x, square_y in SquareInterator((x, y), self._size):
             try:
-                with Lock("{0},{1}".format(square_x, square_y)):
-                    square_object = self._database.get_square(square_x, square_y)
+                square_object = self._database.get_square(square_x, square_y, for_update=True)
 
-                    # Checking if something blocked this square.
-                    if not square_object.is_blocking():
-                        robot.set_location(square_x, square_y)
-                        self._database.add_robot(robot, square_x, square_y)
-                        # Done.
-                        return
+                # Checking if something blocked this square.
+                if not square_object.is_blocking():
+                    robot.set_location(square_x, square_y)
+                    self._database.add_robot(robot, square_x, square_y)
+                    # Done.
+                    return
 
             except LockAlreadyAquiredError:
                 # If this square was locked, go to the next one.
@@ -67,15 +66,14 @@ class World(Singleton):
         # TODO: Check for the map boundaries.
         # Locking both origin and destination.
         origin = robot.get_location()
-        with Lock("{0},{1}".format(*origin)):
-            with Lock("{0},{1}".format(*destination)):
-                origin_square = self._database.get_square(*origin)
-                destination_square = self._database.get_square(*destination)
 
-                origin_square.set_robot_id(None)
-                destination_square.set_robot_id(robot.get_id())
+        origin_square = self._database.get_square(*origin, for_update=True)
+        destination_square = self._database.get_square(*destination, for_update=True)
 
-                robot.set_location(*destination)
+        origin_square.set_robot_id(None)
+        destination_square.set_robot_id(robot.get_id())
+
+        robot.set_location(*destination)
 
     def load_from_file(self, file_path):
         '''Loads a world from the specified file.'''
