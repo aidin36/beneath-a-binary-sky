@@ -18,7 +18,7 @@
 import world.exceptions as exceptions
 from objects.map_square import MapSquare
 from database.memcached_database import MemcachedDatabase
-from database.lock import LockAlreadyAquiredError
+from database.exceptions import LockAlreadyAquiredError
 from utils.singleton import Singleton
 from world.square_iterator import SquareInterator
 

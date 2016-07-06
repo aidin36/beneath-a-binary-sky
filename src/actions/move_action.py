@@ -20,7 +20,7 @@ import time
 import utils.logger
 from actions.action import Action
 from actions.exceptions import InvalidArgumentsError
-from database.lock import LockAlreadyAquiredError
+from database.exceptions import LockAlreadyAquiredError
 from world.world import World
 
 

@@ -17,11 +17,10 @@
 
 import unittest
 
-from database.lock import LockAlreadyAquiredError
 from database.memcached_database import MemcachedDatabase
 from world.world import World
 from world.exceptions import LocationIsBlockedError
-from database.exceptions import InvalidLocationError
+from database.exceptions import InvalidLocationError, LockAlreadyAquiredError
 from actions.exceptions import InvalidArgumentsError
 from actions.action_manager import ActionManager
 from objects.robot import Robot

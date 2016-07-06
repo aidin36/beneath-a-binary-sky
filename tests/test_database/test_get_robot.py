@@ -19,7 +19,7 @@ import unittest
 
 from database.memcached_database import MemcachedDatabase
 from objects.robot import Robot
-from database.lock import LockAlreadyAquiredError
+from database.exceptions import LockAlreadyAquiredError
 
 
 class TestGetRobot(unittest.TestCase):

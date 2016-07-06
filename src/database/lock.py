@@ -15,15 +15,12 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-import pylibmc
-
 from database.memcached_connection import MemcachedConnection
+from database.exceptions import LockAlreadyAquiredError
 
 
 LOCK_POSTFIX = '_L'
 
-class LockAlreadyAquiredError(Exception):
-    '''Raises when lock for a specific key is hold by someone else.'''
 
 class Lock:
     '''Handles a lock on database.

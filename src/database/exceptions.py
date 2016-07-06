@@ -26,6 +26,9 @@ class DatabaseFatalError(FatalError):
 class DatabaseException(Exception):
     '''Base of errors in the database module.'''
 
+class LockAlreadyAquiredError(DatabaseException):
+    '''Raises when lock for a specific key is hold by someone else.'''
+
 class CannotAddObjectError(DatabaseException):
     '''Raises when there is a problem for adding an object (i.e a robot) to the database.
 

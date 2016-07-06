@@ -18,8 +18,7 @@
 import unittest
 
 from database.memcached_database import MemcachedDatabase
-from database.exceptions import DatabaseException, InvalidLocationError
-from database.lock import LockAlreadyAquiredError
+from database.exceptions import DatabaseException, InvalidLocationError, LockAlreadyAquiredError
 from objects.map_square import MapSquare
 from objects.map_square_types import MapSquareTypes
 

@@ -17,7 +17,8 @@
 
 import unittest
 
-from database.lock import Lock, LockAlreadyAquiredError
+from database.lock import Lock
+from database.exceptions import LockAlreadyAquiredError
 
 
 class TestLock(unittest.TestCase):
