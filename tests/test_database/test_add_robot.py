@@ -21,7 +21,7 @@ import unittest.mock
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import CannotAddObjectError
 from database.exceptions import CouldNotSetValueBecauseOfConcurrencyError
-from database.exceptions import RobotNotFoundError
+from database.exceptions import RobotNotFoundError, InvalidLocationError
 from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot
 
@@ -94,3 +94,13 @@ class TestAddRobot(unittest.TestCase):
 
         with self.assertRaises(RobotNotFoundError):
             database.get_robot("test_rollback_87162")
+
+    def test_invalid_location(self):
+        '''Tests if database checks for invalid locations.'''
+        database = MemcachedDatabase()
+
+        new_robot = Robot("test_invalid_location_19887", "123")
+
+        with self.assertRaises(InvalidLocationError):
+            database.add_robot(new_robot, 91872, 16652)
+            database.commit()
