@@ -19,6 +19,7 @@ import unittest
 
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import DatabaseException, InvalidLocationError
+from database.lock import LockAlreadyAquiredError
 from objects.map_square import MapSquare
 from objects.map_square_types import MapSquareTypes
 
@@ -58,3 +59,42 @@ class TestSquares(unittest.TestCase):
 
         with self.assertRaises(InvalidLocationError):
             database.get_square(19873, 1736)
+
+    def test_for_update(self):
+        '''Tests for_update flag of get_square method.'''
+        database = MemcachedDatabase()
+
+        square = database.get_square(6, 1, for_update=True)
+
+        # Testing the lock.
+        with self.assertRaises(LockAlreadyAquiredError):
+            database.get_square(6, 1, for_update=True)
+
+        # Testing commit.
+        square.set_robot_id("ujhqi981762yhdg67")
+
+        # It shouldn't be changed yet.
+        new_square = database.get_square(6, 1)
+        self.assertNotEqual(square.get_robot_id(), new_square.get_robot_id())
+
+        # Committing changes.
+        database.commit()
+        new_square = database.get_square(6, 1)
+        self.assertEqual(square.get_robot_id(), new_square.get_robot_id())
+
+        # Lock should be freed.
+        new_square = database.get_square(6, 1, for_update=True)
+        database.rollback()
+
+    def test_rollback(self):
+        '''Tests if database rolls back the changes correctly.'''
+        database = MemcachedDatabase()
+
+        square = database.get_square(6, 2, for_update=True)
+        square.set_robot_id("iuwuyehdmn990198283")
+
+        database.rollback()
+        database.commit()
+
+        new_square = database.get_square(6, 2)
+        self.assertNotEqual(square.get_robot_id(), new_square.get_robot_id())

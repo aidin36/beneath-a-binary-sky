@@ -21,6 +21,7 @@ import unittest.mock
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import CannotAddObjectError
 from database.exceptions import CouldNotSetValueBecauseOfConcurrencyError
+from database.exceptions import RobotNotFoundError
 from database.memcached_connection import MemcachedConnection
 from objects.robot import Robot
 
@@ -80,3 +81,16 @@ class TestAddRobot(unittest.TestCase):
 
         # Checking to see added robot is clearly rolled back.
         self.assertFalse(mc_connection.get(new_robot.get_id()))
+
+    def test_rollback(self):
+        '''Tests if calling rollback works correctly.'''
+        database = MemcachedDatabase()
+
+        new_robot = Robot("test_rollback_87162", "123")
+        database.add_robot(new_robot, 1, 1)
+
+        database.rollback()
+        database.commit()
+
+        with self.assertRaises(RobotNotFoundError):
+            database.get_robot("test_rollback_87162")
