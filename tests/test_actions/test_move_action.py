@@ -17,6 +17,7 @@
 
 import unittest
 
+from database.lock import LockAlreadyAquiredError
 from database.memcached_database import MemcachedDatabase
 from world.world import World
 from world.exceptions import LocationIsBlockedError
@@ -139,5 +140,23 @@ class TestMoveAction(unittest.TestCase):
 
         with self.assertRaises(InvalidArgumentsError):
             action_manager.do_action("123", "move", [robot_id])
+
+        database.rollback()
+
+    def test_lock(self):
+        '''Tests if location is locked.'''
+        robot_id = "test_move_lock_76120"
+        robot = Robot(robot_id, "123")
+        world = World()
+        action_manager = ActionManager()
+        database = MemcachedDatabase()
+
+        world.add_robot(robot, 13, 6)
+        database.commit()
+
+        database.get_square(13, 7, for_update=True)
+
+        with self.assertRaises(LockAlreadyAquiredError):
+            action_manager.do_action("123", "move", [robot_id, "S"])
 
         database.rollback()
