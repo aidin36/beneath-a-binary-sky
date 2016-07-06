@@ -63,12 +63,14 @@ class World(Singleton):
 
         @param destination: A tuple of (x, y)
         '''
-        # TODO: Check for the map boundaries.
         # Locking both origin and destination.
         origin = robot.get_location()
 
         origin_square = self._database.get_square(*origin, for_update=True)
         destination_square = self._database.get_square(*destination, for_update=True)
+
+        if destination_square.is_blocking():
+            raise exceptions.LocationIsBlockedError("Destination location {0} is blocked.".format(destination))
 
         origin_square.set_robot_id(None)
         destination_square.set_robot_id(robot.get_id())

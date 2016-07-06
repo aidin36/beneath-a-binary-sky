@@ -20,6 +20,7 @@ from security.authenticator import Authenticator
 import actions.exceptions as exceptions
 from actions.status_action import StatusAction
 from actions.info_action import InfoAction
+from actions.move_action import MoveAction
 
 
 class ActionManager:
@@ -29,7 +30,8 @@ class ActionManager:
         self._database = MemcachedDatabase()
 
         self._actions = {'status': StatusAction(),
-                         'info': InfoAction()}
+                         'info': InfoAction(),
+                         'move': MoveAction()}
 
 
     def do_action(self, password, action_type, args):

@@ -21,3 +21,6 @@ class InvalidWorldFileError(Exception):
 
 class WorldIsFullError(Exception):
     '''Raises if no free square is available in the world!'''
+
+class LocationIsBlockedError(Exception):
+    '''Raises if a location is blocked, i.e. a robot tried to move to a blocked location.'''

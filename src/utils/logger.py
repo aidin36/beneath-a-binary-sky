@@ -19,3 +19,8 @@ def error(log_message):
     '''
     '''
     print("Error:", log_message)
+
+def info(log_message):
+    '''
+    '''
+    print("Info:", log_message)

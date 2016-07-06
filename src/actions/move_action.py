@@ -15,8 +15,12 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import time
+
+import utils.logger
 from actions.action import Action
 from actions.exceptions import InvalidArgumentsError
+from database.lock import LockAlreadyAquiredError
 from world.world import World
 
 
@@ -37,11 +41,11 @@ class MoveAction(Action):
         @param robot: Instance of `objects.robot.Robot'.
         '''
         # Validating arguments.
-        if len(args) != 1:
-            raise InvalidArgumentsError("Move action takes exactly one argument. {0} given.".format(len(args)))
+        if len(args) != 2:
+            raise InvalidArgumentsError("Move action takes exactly two argument. {0} given.".format(len(args)))
 
-        direction = args[0]
-        if not isinstance(direction, str) and direction not in MoveAction.DIRECTIONS:
+        direction = args[1]
+        if not isinstance(direction, str) or direction not in MoveAction.DIRECTIONS:
             raise InvalidArgumentsError("Invalid direction passed to Move action.")
 
         robot_location = robot.get_location()
@@ -49,5 +53,16 @@ class MoveAction(Action):
         destination = (robot_location[0] + direction_points[0],
                        robot_location[1] + direction_points[1])
 
+        try:
+            self._do_move(robot, destination)
+        except LockAlreadyAquiredError:
+            # Waiting for a moment, and trying one more time.
+            # Client shouldn't receive an error if, for example, someone updating a plant on these squares.
+            utils.logger.info("Concurrency when trying to move a robot.")
+            time.sleep(0.05)
+            self._do_move(robot, destination)
+
+    def _do_move(self, robot, destination):
+        '''Actually moves the robot to the new location.'''
         world = World()
         world.move_robot(robot, destination)
