@@ -75,11 +75,24 @@ class Transaction:
         # Adding new objects.
         add_list = {x.get_id(): x for x in self._new_objects}
         if len(add_list) > 0:
-            errors = connection.add_multi(add_list)
+            errors = []
+            try:
+                errors = connection.add_multi(add_list)
+            except Exception as error:
+                utils.logger.error("On committing: Error when calling `add_multi': {0}'n{1}".format(
+                    error, traceback.format_exc()))
+                raise
 
             if len(errors) > 0:
-                # Rolling back previously aded objects.
-                connection.delete_multi(add_list.keys())
+                # Rolling back previously added objects.
+                for added_id in add_list.keys():
+                    # If object is not in the errors list, it really added. Trying to delete it.
+                    if added_id not in errors:
+                        result = connection.delete(added_id)
+
+                        if not result:
+                            raise DatabaseFatalError("An error occured when rolling back added objects, and "
+                                                     "Server could not handle it. Database may no-longer valid.")
 
                 raise CannotAddObjectError("Could not add these objects to the database: {0}".format(errors))
 
