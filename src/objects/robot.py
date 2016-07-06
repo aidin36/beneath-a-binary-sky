@@ -20,10 +20,11 @@ from objects.base_object import BaseObject
 
 class Robot(BaseObject):
 
-    def __init__(self, id, password):
+    def __init__(self, id, password, name=""):
         super(Robot, self).__init__()
 
         self._id = id
+        self._name = name
         self._alive = True
         self._password = password
         self._x = 0
@@ -31,6 +32,9 @@ class Robot(BaseObject):
 
     def get_id(self):
         return self._id
+
+    def get_name(self):
+        return self._name
 
     def get_alive(self):
         return self._alive

@@ -17,6 +17,7 @@
 
 import random
 
+from actions.exceptions import InvalidArgumentsError
 from security.authenticator import Authenticator
 from database.memcached_database import MemcachedDatabase
 from world.world import World
@@ -50,8 +51,13 @@ class PopulationControl:
             new robot will be born software near its parent. If not, it
             will be born on a random place.
         '''
+        parent_robot_id = None
         if len(args) > 0:
             parent_robot_id = args[0]
+
+        if parent_robot_id is not None:
+            if not isinstance(parent_robot_id, str):
+                raise InvalidArgumentsError("`parent_robot_id' must be `str', not {0}".format(type(parent_robot_id)))
 
             parent_robot = self._database.get_robot(parent_robot_id)
             born_location = parent_robot.get_location()
@@ -60,10 +66,15 @@ class PopulationControl:
             born_location = (random.randint(0, world_size[0] - 1),
                              random.randint(0, world_size[1] - 1))
 
+        robot_name = ""
+        if len(args) == 2:
+            robot_name = args[1]
+
         self._authenticator.authenticate_new_robot(password)
 
         new_robot = Robot(self._robot_id_generator.get_robot_id(),
-                          self._robot_id_generator.get_password())
+                          self._robot_id_generator.get_password(),
+                          name=robot_name)
 
         self._world.add_robot(new_robot, born_location[0], born_location[1])
 
