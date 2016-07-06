@@ -35,7 +35,7 @@ class TestInfoAction(unittest.TestCase):
         database.commit()
 
         action_manager = ActionManager()
-        info = action_manager.do_action(new_robot.get_password(), "info", [new_robot.get_id()])
+        info = action_manager.do_action(new_robot.get_password(), "sense", [new_robot.get_id()])
 
         self.assertEqual(len(info), 9)
 
@@ -49,7 +49,7 @@ class TestInfoAction(unittest.TestCase):
         database.commit()
 
         action_manager = ActionManager()
-        info = action_manager.do_action(new_robot.get_password(), "info", [new_robot.get_id()])
+        info = action_manager.do_action(new_robot.get_password(), "sense", [new_robot.get_id()])
 
         self.assertEqual(len(info), 9)
         self.assertEqual(info["9,4"], {"surface_type": MapSquareTypes.SOIL,
@@ -75,6 +75,6 @@ class TestInfoAction(unittest.TestCase):
         database.commit()
 
         action_manager = ActionManager()
-        info = action_manager.do_action(new_robot.get_password(), "info", [new_robot.get_id()])
+        info = action_manager.do_action(new_robot.get_password(), "sense", [new_robot.get_id()])
 
         self.assertEqual(len(info), 6)

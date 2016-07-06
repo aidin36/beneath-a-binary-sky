@@ -21,7 +21,7 @@ from world.world import World
 from database.memcached_database import MemcachedDatabase
 
 
-class InfoAction(Action):
+class SenseAction(Action):
 
     def do_action(self, robot, args):
         '''Gathers and sends information about robot's surrendering.
