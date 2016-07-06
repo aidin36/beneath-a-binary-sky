@@ -16,12 +16,18 @@
 # <http://www.gnu.org/licenses/>.
 
 from objects.base_object import BaseObject
+from objects.exceptions import LongRobotNameError
+
+MAX_ROBOT_NAME = 32
 
 
 class Robot(BaseObject):
 
     def __init__(self, id, password, name=""):
         super(Robot, self).__init__()
+
+        if not isinstance(name, str) or len(name) > MAX_ROBOT_NAME:
+            raise LongRobotNameError("Robot name cannot be longer than {0}".format(MAX_ROBOT_NAME))
 
         self._id = id
         self._name = name

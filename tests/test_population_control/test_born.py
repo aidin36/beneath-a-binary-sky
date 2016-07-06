@@ -18,7 +18,8 @@
 import unittest
 
 from actions.exceptions import InvalidArgumentsError
-from objects.robot import Robot
+from objects.robot import Robot, MAX_ROBOT_NAME
+from objects.exceptions import LongRobotNameError
 from population.population_control import PopulationControl
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import InvalidPasswordError
@@ -36,7 +37,9 @@ class TestBorn(unittest.TestCase):
         robot_info = population_control.execute_command("iujeh87UYh6512ewQ", "born", [None, "RDaniel"])
         database.commit()
 
-        database.get_robot(robot_info['robot_id'])
+        gotted_robot = database.get_robot(robot_info['robot_id'])
+
+        self.assertEqual(gotted_robot.get_name(), "RDaniel")
 
     def test_wrong_password(self):
         '''Tests borning a robot with wrong password.'''
@@ -67,4 +70,32 @@ class TestBorn(unittest.TestCase):
 
         population_control.execute_command("oijdnnh76153WEd", "born", ["test_with_parent_18873", "My Child"])
 
+        database.rollback()
+
+    def test_bad_name(self):
+        '''Tries to born a robot with an invalid name. Should be fail.'''
+        population_control = PopulationControl()
+        database = MemcachedDatabase()
+
+        database.add_password("OIkdj981HJDJHcnm_1")
+        database.add_password("OIkdj981HJDJHcnm_2")
+        database.add_password("OIkdj981HJDJHcnm_3")
+        database.add_password("OIkdj981HJDJHcnm_4")
+        database.commit()
+
+        long_name = "n" * (MAX_ROBOT_NAME + 1)
+        with self.assertRaises(LongRobotNameError):
+            population_control.execute_command("OIkdj981HJDJHcnm_1", "born", [None, long_name])
+        database.rollback()
+
+        with self.assertRaises(LongRobotNameError):
+            population_control.execute_command("OIkdj981HJDJHcnm_2", "born", [None, None])
+        database.rollback()
+
+        with self.assertRaises(LongRobotNameError):
+            population_control.execute_command("OIkdj981HJDJHcnm_3", "born", [None, b"some bytes"])
+        database.rollback()
+
+        with self.assertRaises(LongRobotNameError):
+            population_control.execute_command("OIkdj981HJDJHcnm_4", "born", [None, database])
         database.rollback()
