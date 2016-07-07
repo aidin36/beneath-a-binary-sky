@@ -45,7 +45,7 @@ def main():
         from world.world import World
 
         world = World()
-        world.load_from_file(os.path.join(current_module_directory, "..", "sample_configs", "small.world"))
+        world.load_from_file(os.path.join(current_module_directory, "..", "sample_configs", "tests.world"))
 
         # Running tests.
         loader = unittest.TestLoader()
