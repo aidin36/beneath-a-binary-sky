@@ -35,5 +35,9 @@ InvalidLocationError                       Specified location is not valid. For 
 LockAlreadyAquiredError                    Two or more concurrent requests happened and server couldn't handle it. Client should retry its action.
 AuthenticationFailedError                  Raises if a robot could not be authenticated. i.e. it's password is wrong, or it's dead.
 WorldIsFullError                           Normally, it shouldn't happen! If it is, it means all the world is filled with blocking objects. No one can move!
+LocationIsBlockedError                     Raises if a location is blocked, i.e. a robot tried to move to a location that blocked with a rock.
+AlreadyPlantError                          Raises if a robot tries to plant on a location that already contains a plant.
+CannotPlantHereError                       Raises if a robot tries to plant on a non-soil square.
+LongRobotNameError                         Raises if name of a robot is too long.
 =========================================  =====================================
 
