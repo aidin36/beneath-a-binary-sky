@@ -86,11 +86,11 @@
 <tr class="row-even"><td>DatabaseException</td>
 <td>Normally, client shouldn&#8217;t receive this error. Most of the times, it means there&#8217;s something wrong with the server.</td>
 </tr>
-<tr class="row-odd"><td>CannotAddRobotError</td>
-<td><p class="first">Raises when there is a problem for adding a robot to the database.
+<tr class="row-odd"><td>CannotAddObjectError</td>
+<td><p class="first">Raises when there is a problem for adding an object (i.e a robot) to the database.
 Common causes:</p>
 <blockquote class="last">
-<div>Robot ID is already exists.
+<div>Object (Robot) ID is already exists.
 Memcached is not started.
 Memory is full.</div></blockquote>
 </td>
@@ -115,6 +115,24 @@ Memory is full.</div></blockquote>
 </tr>
 <tr class="row-even"><td>WorldIsFullError</td>
 <td>Normally, it shouldn&#8217;t happen! If it is, it means all the world is filled with blocking objects. No one can move!</td>
+</tr>
+<tr class="row-odd"><td>LocationIsBlockedError</td>
+<td>Raises if a location is blocked, i.e. a robot tried to move to a location that blocked with a rock.</td>
+</tr>
+<tr class="row-even"><td>AlreadyPlantError</td>
+<td>Raises if a robot tries to plant on a location that already contains a plant.</td>
+</tr>
+<tr class="row-odd"><td>CannotPlantHereError</td>
+<td>Raises if a robot tries to plant on a non-soil square.</td>
+</tr>
+<tr class="row-even"><td>LongRobotNameError</td>
+<td>Raises if name of a robot is too long.</td>
+</tr>
+<tr class="row-odd"><td>NoWaterError</td>
+<td>Raises if a robot tries to pick up water from a dry square.</td>
+</tr>
+<tr class="row-even"><td>RobotHaveNoWaterError</td>
+<td>Raises if the robot does not carry any water, but tries to water a square.</td>
 </tr>
 </tbody>
 </table>
