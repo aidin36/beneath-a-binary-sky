@@ -17,7 +17,7 @@
 
 from actions.action import Action
 from actions.exceptions import InvalidArgumentsError, NoWaterError
-from database.memcached_database import MemcachedDatabase
+from world.world import World
 from objects.map_square_types import MapSquareTypes
 
 
@@ -26,7 +26,7 @@ class PickWaterAction(Action):
     def __init__(self):
         super().__init__()
 
-        self._database = MemcachedDatabase()
+        self._world = World()
 
     def do_action(self, robot, args):
         '''Fill water tank of the robot.
@@ -36,7 +36,7 @@ class PickWaterAction(Action):
         if len(args) != 1:
             raise InvalidArgumentsError("`take_water' takes no arguments.")
 
-        current_square = self._database.get_square(*robot.get_location())
+        current_square = self._world.get_square(robot.get_location())
 
         if current_square.get_type() != MapSquareTypes.WATER:
             raise NoWaterError("There's no water on square {0}".format(robot.get_location()))

@@ -44,7 +44,7 @@ class World(Singleton):
         '''
         for square_x, square_y in SquareInterator((x, y), self._size):
             try:
-                square_object = self._database.get_square(square_x, square_y, for_update=True)
+                square_object = self.get_square((square_x, square_y), for_update=True)
 
                 # Checking if something blocked this square.
                 if not square_object.is_blocking():
@@ -67,8 +67,8 @@ class World(Singleton):
         # Locking both origin and destination.
         origin = robot.get_location()
 
-        origin_square = self._database.get_square(*origin, for_update=True)
-        destination_square = self._database.get_square(*destination, for_update=True)
+        origin_square = self.get_square(origin, for_update=True)
+        destination_square = self.get_square(destination, for_update=True)
 
         if destination_square.is_blocking():
             raise exceptions.LocationIsBlockedError("Destination location {0} is blocked.".format(destination))
@@ -80,7 +80,7 @@ class World(Singleton):
 
     def plant(self, plant, location):
         '''Plant a plant on the specified location.'''
-        square = self._database.get_square(*location, for_update=True)
+        square = self.get_square(location, for_update=True)
 
         if square.is_blocking():
             raise exceptions.LocationIsBlockedError("Location {0} is blocked.".format(location))

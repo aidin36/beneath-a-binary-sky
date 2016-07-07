@@ -18,22 +18,24 @@
 from actions.action import Action
 from world.square_iterator import SquareInterator
 from world.world import World
-from database.memcached_database import MemcachedDatabase
 
 
 class SenseAction(Action):
+
+    def __init__(self):
+        super().__init__()
+
+        self._world = World()
 
     def do_action(self, robot, args):
         '''Gathers and sends information about robot's surrendering.
 
         @param robot: Instance of `objects.robot.Robot'.
         '''
-        world = World()
-        database = MemcachedDatabase()
 
         result = {}
-        for square_x, square_y in SquareInterator(robot.get_location(), world.get_size(), max_radios=1):
-            square_object = database.get_square(square_x, square_y)
+        for square_x, square_y in SquareInterator(robot.get_location(), self._world.get_size(), max_radios=1):
+            square_object = self._world.get_square((square_x, square_y))
 
             is_there_a_robot = square_object.get_robot_id() is not None
             is_there_a_plant = square_object.get_plant() is not None
