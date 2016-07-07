@@ -39,5 +39,6 @@ LocationIsBlockedError                     Raises if a location is blocked, i.e.
 AlreadyPlantError                          Raises if a robot tries to plant on a location that already contains a plant.
 CannotPlantHereError                       Raises if a robot tries to plant on a non-soil square.
 LongRobotNameError                         Raises if name of a robot is too long.
+NoWaterError                               'Raises if a robot tries to pick up water from a dry square.
 =========================================  =====================================
 

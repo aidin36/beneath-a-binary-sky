@@ -22,6 +22,7 @@ from actions.status_action import StatusAction
 from actions.sense_action import SenseAction
 from actions.move_action import MoveAction
 from actions.plant_action import PlantAction
+from actions.pick_water import PickWaterAction
 
 
 class ActionManager:
@@ -33,7 +34,8 @@ class ActionManager:
         self._actions = {'status': StatusAction(),
                          'sense': SenseAction(),
                          'move': MoveAction(),
-                         'plant': PlantAction()}
+                         'plant': PlantAction(),
+                         'pick_water': PickWaterAction()}
 
 
     def do_action(self, password, action_type, args):

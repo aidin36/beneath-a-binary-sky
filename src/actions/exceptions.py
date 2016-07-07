@@ -21,3 +21,6 @@ class InvalidArgumentsError(Exception):
 
 class InvalidActionError(Exception):
     '''Raises when specified action does not exists or invalid.'''
+
+class NoWaterError(Exception):
+    '''Raises if a robot standing on a dry square tries to pick up water.'''

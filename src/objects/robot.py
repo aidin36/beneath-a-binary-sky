@@ -35,6 +35,7 @@ class Robot(BaseObject):
         self._password = password
         self._x = 0
         self._y = 0
+        self._have_water = False
 
     def get_id(self):
         return self._id
@@ -58,3 +59,9 @@ class Robot(BaseObject):
     def set_location(self, x, y):
         self._x = x
         self._y = y
+
+    def set_have_water(self, value):
+        self._have_water = value
+
+    def get_have_water(self):
+        return self._have_water
