@@ -25,4 +25,6 @@ class StatusAction(Action):
     def do_action(self, robot, args):
         '''Do the status action.'''
 
-        return {'alive': robot.get_alive()}
+        return {'alive': robot.get_alive(),
+                'location': "{0},{1}".format(*robot.get_location()),
+                'have_water': robot.get_have_water()}
