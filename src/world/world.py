@@ -17,6 +17,7 @@
 
 import world.exceptions as exceptions
 from objects.map_square import MapSquare
+from objects.map_square_types import MapSquareTypes
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import LockAlreadyAquiredError
 from utils.singleton import Singleton
@@ -76,6 +77,21 @@ class World(Singleton):
         destination_square.set_robot_id(robot.get_id())
 
         robot.set_location(*destination)
+
+    def plant(self, plant, location):
+        '''Plant a plant on the specified location.'''
+        square = self._database.get_square(*location, for_update=True)
+
+        if square.is_blocking():
+            raise exceptions.LocationIsBlockedError("Location {0} is blocked.".format(location))
+
+        if square.get_type() != MapSquareTypes.SOIL:
+            raise exceptions.CannotPlantHereError("Cannot plant on {0} square type.".format(square.get_type()))
+
+        if square.get_plant() is not None:
+            raise exceptions.AlreadyPlantError("There's already a plant on {0}".format(location))
+
+        square.set_plant(plant)
 
     def load_from_file(self, file_path):
         '''Loads a world from the specified file.'''

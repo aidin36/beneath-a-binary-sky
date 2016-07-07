@@ -21,6 +21,7 @@ import actions.exceptions as exceptions
 from actions.status_action import StatusAction
 from actions.sense_action import SenseAction
 from actions.move_action import MoveAction
+from actions.plant_action import PlantAction
 
 
 class ActionManager:
@@ -31,7 +32,8 @@ class ActionManager:
 
         self._actions = {'status': StatusAction(),
                          'sense': SenseAction(),
-                         'move': MoveAction()}
+                         'move': MoveAction(),
+                         'plant': PlantAction()}
 
 
     def do_action(self, password, action_type, args):

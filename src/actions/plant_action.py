@@ -15,18 +15,27 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from actions.action import Action
+from actions.exceptions import InvalidArgumentsError
+from objects.plant import Plant
+from world.world import World
 
-class InvalidWorldFileError(Exception):
-    '''Raises if there's something wrong with the specified world file.'''
 
-class WorldIsFullError(Exception):
-    '''Raises if no free square is available in the world!'''
+class PlantAction(Action):
 
-class LocationIsBlockedError(Exception):
-    '''Raises if a location is blocked, i.e. a robot tried to move to a blocked location.'''
+    def __init__(self):
+        super().__init__()
 
-class AlreadyPlantError(Exception):
-    '''Raises if a robot tries to plant on a location that already contains a plant.'''
+        self._world = World()
 
-class CannotPlantHereError(Exception):
-    '''Raises if a robot tries to plant on a non-soil square.'''
+    def do_action(self, robot, args):
+        '''Plant a plant where robot stands.
+
+        @param robot: Instance of `objects.robot.Robot'.
+        '''
+        if len(args) > 1:
+            raise InvalidArgumentsError("`plant' action takes no arguments.")
+
+        plant = Plant()
+
+        self._world.plant(plant, robot.get_location())

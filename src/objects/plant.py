@@ -15,18 +15,15 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from objects.base_object import BaseObject
 
-class InvalidWorldFileError(Exception):
-    '''Raises if there's something wrong with the specified world file.'''
 
-class WorldIsFullError(Exception):
-    '''Raises if no free square is available in the world!'''
+class Plant(BaseObject):
 
-class LocationIsBlockedError(Exception):
-    '''Raises if a location is blocked, i.e. a robot tried to move to a blocked location.'''
+    def __init__(self):
+        super().__init__()
 
-class AlreadyPlantError(Exception):
-    '''Raises if a robot tries to plant on a location that already contains a plant.'''
+        self._age = 0
 
-class CannotPlantHereError(Exception):
-    '''Raises if a robot tries to plant on a non-soil square.'''
+    def get_age(self):
+        return self._age
