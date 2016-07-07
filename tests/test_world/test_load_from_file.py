@@ -25,7 +25,7 @@ import subprocess
 from database.memcached_connection import MemcachedConnection
 from world.world import World
 from world.exceptions import InvalidWorldFileError
-
+from utils.configs import Configs
 
 class NewWorld:
     '''Forces the world to create a new instance, instead of
@@ -46,15 +46,15 @@ class TestLoadFromFile(unittest.TestCase):
         port = random.randrange(11600, 11700)
         self._memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", str(port)])
 
-        # Waiting for the memcache to start.
-        time.sleep(0.2)
+        # Waiting for the memcached to start.
+        time.sleep(0.5)
 
         mc_connection = MemcachedConnection()
         mc_connection.config_connection(port)
 
     def tearDown(self):
         # Resetting database to its default port.
-        MemcachedConnection().config_connection(MemcachedConnection.DEFAULT_PORT)
+        MemcachedConnection().config_connection(Configs().get_database_port())
 
         self._memcached_process.terminate()
 

@@ -18,6 +18,7 @@
 import time
 
 from utils.singleton import Singleton
+from utils.configs import Configs
 from database.memcached_connection import MemcachedConnection
 from database.transaction import Transaction
 import database.exceptions as exceptions
@@ -33,8 +34,10 @@ class MemcachedDatabase(Singleton):
 
     def initialize(self):
         '''Initializes the database by setting required key-values.'''
-        mc_connection = MemcachedConnection().get_connection()
+        mc = MemcachedConnection()
+        mc.config_connection(Configs().get_database_port())
 
+        mc_connection = mc.get_connection()
         mc_connection.add("all_robots", [])
 
     def get_lock(self, lock_key):

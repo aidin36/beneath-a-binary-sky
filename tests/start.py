@@ -22,30 +22,45 @@ import unittest
 import subprocess
 
 
+def load_configs(current_directory):
+    from utils.configs import Configs
+
+    configs = Configs()
+    configs.load_configs(os.path.join(current_directory, '..', 'sample_configs', 'tests.config'))
+
+    return configs
+
+def initialize_database():
+    from database.memcached_database import MemcachedDatabase
+
+    database = MemcachedDatabase()
+    database.initialize()
+
+
+def initialize_world(current_directory):
+    from world.world import World
+
+    world = World()
+    world.load_from_file(os.path.join(current_directory, "..", "sample_configs", "tests.world"))
+
+
 def main():
     # Adding main source directory to the modules path.
     current_module_directory = os.path.abspath(os.path.dirname(sys.modules[__name__].__file__))
     sys.path.insert(0, os.path.join(current_module_directory, '..', 'src'))
 
+    configs = load_configs(current_module_directory)
+
     # Running new instance of memcached.
-    from database.memcached_connection import MemcachedConnection
-    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", MemcachedConnection.DEFAULT_PORT])
+    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", configs.get_database_port()])
 
     try:
         # Sleeping a little, to ensure Memcached is started.
-        time.sleep(0.2)
+        time.sleep(0.5)
 
-        # Initializing the database.
-        from database.memcached_database import MemcachedDatabase
+        initialize_database()
 
-        database = MemcachedDatabase()
-        database.initialize()
-
-        # Initializing a small world.
-        from world.world import World
-
-        world = World()
-        world.load_from_file(os.path.join(current_module_directory, "..", "sample_configs", "tests.world"))
+        initialize_world(current_module_directory)
 
         # Running tests.
         loader = unittest.TestLoader()
