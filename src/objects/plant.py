@@ -24,6 +24,13 @@ class Plant(BaseObject):
         super().__init__()
 
         self._age = 0
+        self._water_level = 100
 
     def get_age(self):
         return self._age
+
+    def set_water_level(self, value):
+        self._water_level = value
+
+    def get_water_level(self):
+        return self._water_level

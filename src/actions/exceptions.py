@@ -24,3 +24,6 @@ class InvalidActionError(Exception):
 
 class NoWaterError(Exception):
     '''Raises if a robot standing on a dry square tries to pick up water.'''
+
+class RobotHaveNoWaterError(Exception):
+    '''Raises if the robot does not carry any water, but tries to water a square.'''

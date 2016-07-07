@@ -41,4 +41,4 @@ class PickWaterAction(Action):
         if current_square.get_type() != MapSquareTypes.WATER:
             raise NoWaterError("There's no water on square {0}".format(robot.get_location()))
 
-        robot.set_have_water(True)
+        robot.set_has_water(True)

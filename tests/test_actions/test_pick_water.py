@@ -48,7 +48,7 @@ class TestPickWater(unittest.TestCase):
 
         action.do_action(robot, ["19882ukfdjfhuoIE"])
 
-        self.assertTrue(robot.get_have_water())
+        self.assertTrue(robot.get_has_water())
 
     def test_non_water_square(self):
         '''Tests trying to pick water from a dry location.'''

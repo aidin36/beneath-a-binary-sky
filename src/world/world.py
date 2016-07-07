@@ -93,6 +93,16 @@ class World(Singleton):
 
         square.set_plant(plant)
 
+    def get_square(self, location, for_update=False):
+        '''Gets the square object of the specified location.
+
+        @param location: Location to get.
+        @param for_update: If you want to update this square (store its
+            changes back to the database) you should set this flag.
+            Note that it automatically updates the changes if transaction commits.
+        '''
+        return self._database.get_square(*location, for_update=for_update)
+
     def load_from_file(self, file_path):
         '''Loads a world from the specified file.'''
         with open(file_path, 'r') as world_file:

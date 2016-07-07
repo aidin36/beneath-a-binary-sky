@@ -82,7 +82,7 @@ class MemcachedDatabase(Singleton):
     def get_square(self, x, y, for_update=False):
         '''Gets a map square.
 
-        @param for_update: If you want to update this robot (store its
+        @param for_update: If you want to update this square (store its
             changes back to the database) you should set this flag.
             Note that it automatically updates the changes when
             `commit' method calls.
