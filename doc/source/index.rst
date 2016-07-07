@@ -16,7 +16,20 @@ Beneath a Binary Sky is a programming game. It means, players are not humans, bu
 
 Unlike most of similar games out there, Beneath a Binary Sky is a peaceful world. The goal is not to kill other robots and prove that you're the strongest, rather it about co-operating to make a better living, a better world.
 
-.. TODO: A photo that shows a robot and a plant, and it should note that "robots should agriculture in order to make food".
+.. TODO: An image that shows a robot and a plant, and it should note that "robots should cultivate in order to make food".
+
+Beneath a Binary Sky can be used as a tool for researching in Artificial Intelligence (specially Intelligence Agent), or simply as a high level game for programmers.
+
+Outstanding Features
+--------------------
+
+* Each robot is controlled by a separate process which communicates with the server through network. Thus, robots can be written in any language, on any platform.
+
+* Robots can clone themselves (producing children).
+
+* All of the rules of the world is configurable.
+
+.. TODO: An image showing the relation between robots and the simulator server.
 
 Free Software
 ---------------
@@ -24,7 +37,7 @@ Free Software
 .. image:: _static/gplv3.png
   :alt: Gnu General Public License, version 3
 
-Beneath a Binary Sky is a free (as in freedom) software. It is published under the terms of Gnu General Public License (GPL). The source code is available on Github.
+Beneath a Binary Sky is a free (as in freedom) software. It is published under the terms of Gnu General Public License (GPL) Version 3. The source code is available on `Github <https://github.com/aidin36/beneath-a-binary-sky>`_.
 
 Key Rules of the World
 -----------------------
