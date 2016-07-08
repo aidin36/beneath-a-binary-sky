@@ -34,11 +34,20 @@ class MemcachedDatabase(Singleton):
 
     def initialize(self):
         '''Initializes the database by setting required key-values.'''
+        self._hooks = []
+
         mc = MemcachedConnection()
         mc.config_connection(Configs().get_database_port())
 
         mc_connection = mc.get_connection()
         mc_connection.add("all_robots", [])
+
+    def register_hook(self, hook_object):
+        '''Registers the specified hook, and calls it on different events.
+
+        @param hook_object: Instance of DatabaseHook.
+        '''
+        self._hooks.append(hook_object)
 
     def get_lock(self, lock_key):
         '''Gets a lock on database.
@@ -109,6 +118,10 @@ class MemcachedDatabase(Singleton):
             transaction = self._get_transaction()
             transaction.store_object(result)
 
+        # Calling all registered hooks and letting them update the object.
+        for hook in self._hooks:
+            result = hook.square_got(result, for_update)
+
         return result
 
     def add_robot(self, robot_object, x, y):
@@ -154,6 +167,10 @@ class MemcachedDatabase(Singleton):
         if for_update:
             transaction = self._get_transaction()
             transaction.store_object(result)
+
+        # Calling all registered hooks and letting them update the object.
+        for hook in self._hooks:
+            result = hook.robot_got(result, for_update)
 
         return result
 

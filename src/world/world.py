@@ -21,14 +21,17 @@ from objects.map_square_types import MapSquareTypes
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import LockAlreadyAquiredError
 from utils.singleton import Singleton
+from world.object_updater import ObjectUpdater
 from world.square_iterator import SquareInterator
 
 
 class World(Singleton):
 
     def _initialize(self):
-        self._database = MemcachedDatabase()
         self._size = (-1, -1)
+        self._database = MemcachedDatabase()
+
+        self._database.register_hook(ObjectUpdater())
 
     def get_size(self):
         '''Returns size of the world.'''

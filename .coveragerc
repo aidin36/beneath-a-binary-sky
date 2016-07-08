@@ -5,3 +5,4 @@ include = *src/*
 exclude_lines =
     pragma: no cover
     raise NotImplementedError
+    class DatabaseHook
