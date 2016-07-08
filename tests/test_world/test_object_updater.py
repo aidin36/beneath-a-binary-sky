@@ -39,7 +39,7 @@ class TestObjectUpdater(unittest.TestCase):
         world.add_robot(robot, 0, 9)
         database.commit()
 
-        received_robot = database.get_robot("test_out_of_life_robot_9022")
+        received_robot = database.get_robot("test_out_of_life_robot_9022", for_update=False)
         self.assertFalse(received_robot.get_alive())
 
         square = world.get_square((0, 9))
@@ -56,7 +56,7 @@ class TestObjectUpdater(unittest.TestCase):
         world.add_robot(robot, 1, 9)
         database.commit()
 
-        got_robot = database.get_robot("test_out_of_energy_robot_18773")
+        got_robot = database.get_robot("test_out_of_energy_robot_18773", for_update=False)
         self.assertFalse(got_robot.get_alive())
 
         square = world.get_square((1, 9))

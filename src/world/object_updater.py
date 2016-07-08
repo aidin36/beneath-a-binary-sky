@@ -45,7 +45,8 @@ class ObjectUpdater(DatabaseHook):
         if robot_object.get_energy() <= 0 or robot_object.get_life() <= 0:
 
             if not locked_for_update:
-                self._database.get_lock(robot_object.get_id())
+                # This would call this method again, and robot will be updated.
+                return self._database.get_robot(robot_object.get_id(), for_update=True)
 
             robot_object.set_alive(False)
 
