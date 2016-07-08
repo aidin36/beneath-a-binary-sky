@@ -63,7 +63,7 @@ class ActionManager:
 
             # Reducing age and energy.
             robot.set_energy(robot.get_energy() - 1)
-            robot.set_age(robot.get_age() - 1)
+            robot.set_life(robot.get_life() - 1)
 
             return result
 
@@ -88,7 +88,7 @@ class ActionManager:
 
             robot = self._database.get_robot(robot_id, for_update=True)
             robot.set_energy(robot.get_energy() - 1)
-            robot.set_age(robot.get_age() - 1)
+            robot.set_life(robot.get_life() - 1)
 
             self._database.commit()
 

@@ -41,6 +41,6 @@ class Configs(Singleton):
         return self._config_parser.get("robots", "initial_energy",
                                        fallback=75)
 
-    def get_robots_maximum_age(self):
-        return self._config_parser.get("robots", "maximum_age",
+    def get_robots_initial_life(self):
+        return self._config_parser.get("robots", "initial_life",
                                        fallback=500)

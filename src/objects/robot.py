@@ -41,7 +41,7 @@ class Robot(BaseObject):
         self._y = 0
         self._has_water = False
         self._energy = configs.get_robots_initial_energy()
-        self._age = configs.get_robots_maximum_age()
+        self._life = configs.get_robots_initial_life()
 
     def get_id(self):
         return self._id
@@ -78,8 +78,8 @@ class Robot(BaseObject):
     def get_energy(self):
         return self._energy
 
-    def set_age(self, value):
-        self._age = value
+    def set_life(self, value):
+        self._life = value
 
-    def get_age(self):
-        return self._age
+    def get_life(self):
+        return self._life
