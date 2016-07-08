@@ -73,35 +73,24 @@ class TestActionManager(unittest.TestCase):
 
     def test_bad_actions(self):
         '''Test wrong action IDs.'''
-        # To avoid locking error, a robot is created for each test.
+        robot = Robot("test_bad_actions_2376", "123")
+        self._database.add_robot(robot, 4, 1)
+        self._database.commit()
 
         with self.assertRaises(actions.exceptions.InvalidActionError):
-            robot = Robot("test_bad_actions_2376_1", "123")
-            self._database.add_robot(robot, 4, 1)
-            self._database.commit()
+            self._action_manager.do_action("123", "not-exist-action", ["test_bad_actions_2376"])
 
-            self._action_manager.do_action("123", "not-exist-action", ["test_bad_actions_2376_1"])
-
+        self._database.rollback()
         with self.assertRaises(actions.exceptions.InvalidActionError):
-            robot = Robot("test_bad_actions_2376_2", "123")
-            self._database.add_robot(robot, 4, 2)
-            self._database.commit()
+            self._action_manager.do_action("123", 5432, ["test_bad_actions_2376"])
 
-            self._action_manager.do_action("123", 5432, ["test_bad_actions_2376_2"])
-
+        self._database.rollback()
         with self.assertRaises(actions.exceptions.InvalidActionError):
-            robot = Robot("test_bad_actions_2376_3", "123")
-            self._database.add_robot(robot, 4, 3)
-            self._database.commit()
+            self._action_manager.do_action("123", None, ["test_bad_actions_2376"])
 
-            self._action_manager.do_action("123", None, ["test_bad_actions_2376_3"])
-
+        self._database.rollback()
         with self.assertRaises(actions.exceptions.InvalidActionError):
-            robot = Robot("test_bad_actions_2376_4", "123")
-            self._database.add_robot(robot, 4, 4)
-            self._database.commit()
-
-            self._action_manager.do_action("123", "", ["test_bad_actions_2376_4"])
+            self._action_manager.do_action("123", "", ["test_bad_actions_2376"])
 
     def test_ok(self):
         '''Execute a fine action.'''
