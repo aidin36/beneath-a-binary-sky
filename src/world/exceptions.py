@@ -15,18 +15,20 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from utils.exceptions import BinarySkyException
 
-class InvalidWorldFileError(Exception):
+
+class InvalidWorldFileError(BinarySkyException):
     '''Raises if there's something wrong with the specified world file.'''
 
-class WorldIsFullError(Exception):
+class WorldIsFullError(BinarySkyException):
     '''Raises if no free square is available in the world!'''
 
-class LocationIsBlockedError(Exception):
+class LocationIsBlockedError(BinarySkyException):
     '''Raises if a location is blocked, i.e. a robot tried to move to a blocked location.'''
 
-class AlreadyPlantError(Exception):
+class AlreadyPlantError(BinarySkyException):
     '''Raises if a robot tries to plant on a location that already contains a plant.'''
 
-class CannotPlantHereError(Exception):
+class CannotPlantHereError(BinarySkyException):
     '''Raises if a robot tries to plant on a non-soil square.'''

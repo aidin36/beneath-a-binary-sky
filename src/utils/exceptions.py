@@ -15,8 +15,10 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+class BinarySkyException(Exception):
+    '''Base class for all the exceptions in the server.'''
 
-class FatalError(Exception):
+class FatalError(BinarySkyException):
     '''Base class for fatal errors. If these errors happen, the server state
     is no longer valid.
     '''

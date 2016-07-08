@@ -16,9 +16,10 @@
 # <http://www.gnu.org/licenses/>.
 
 from database.memcached_database import MemcachedDatabase
+from utils.exceptions import BinarySkyException
 
 
-class AuthenticationFailedError(Exception):
+class AuthenticationFailedError(BinarySkyException):
     '''Raises if a robot could not be authenticated.'''
 
 

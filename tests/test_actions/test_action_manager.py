@@ -33,6 +33,10 @@ class TestActionManager(unittest.TestCase):
         self._action_manager = ActionManager()
         self._database = MemcachedDatabase()
 
+    def tearDown(self):
+        # Rolling back any remaining thing.
+        self._database.rollback()
+
     def test_not_exist_robot(self):
         '''Test if ActionManager handles not-existed robot.'''
         with self.assertRaises(RobotNotFoundError):
@@ -105,5 +109,41 @@ class TestActionManager(unittest.TestCase):
         self._database.add_robot(robot, 3, 3)
         self._database.commit()
 
+        initial_energy = robot.get_energy()
+        initial_age = robot.get_age()
+
         result = self._action_manager.do_action("4467yrt-ddfjh-1u872-oiie", "status", ["test_ok_action_3278"])
+
         self.assertEqual(result['alive'], True)
+
+        # Robot should lost energy and age.
+        self._database.commit()
+        robot = self._database.get_robot("test_ok_action_3278")
+        self.assertEqual(robot.get_energy(), initial_energy - 1)
+        self.assertEqual(robot.get_age(), initial_age - 1)
+
+    def test_losing_energy_on_error(self):
+        '''Tests if ActionManager reduces energy and age after an exception.'''
+        robot = Robot("test_losing_energy_on_error_981", "091oikjdmncj")
+        self._database.add_robot(robot, 5, 3)
+        self._database.commit()
+
+        initial_energy = robot.get_energy()
+        initial_age = robot.get_age()
+
+        with self.assertRaises(actions.exceptions.InvalidActionError):
+            self._action_manager.do_action("091oikjdmncj", "invalid_action", ["test_losing_energy_on_error_981"])
+
+        self._database.commit()
+        robot = self._database.get_robot("test_losing_energy_on_error_981")
+        self.assertEqual(robot.get_energy(), initial_energy - 1)
+        self.assertEqual(robot.get_age(), initial_age - 1)
+
+        # Robot shouldn't lose energy on authentication error.
+        with self.assertRaises(AuthenticationFailedError):
+            self._action_manager.do_action("wrong pass", "invalid_action", ["test_losing_energy_on_error_981"])
+
+        self._database.rollback()
+        robot = self._database.get_robot("test_losing_energy_on_error_981")
+        self.assertEqual(robot.get_energy(), initial_energy - 1)
+        self.assertEqual(robot.get_age(), initial_age - 1)

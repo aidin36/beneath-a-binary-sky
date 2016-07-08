@@ -15,5 +15,8 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-class LongRobotNameError(Exception):
+from utils.exceptions import BinarySkyException
+
+
+class LongRobotNameError(BinarySkyException):
     '''Raises if name of a robot is too long.'''

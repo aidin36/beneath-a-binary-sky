@@ -15,15 +15,17 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+from utils.exceptions import BinarySkyException
 
-class InvalidArgumentsError(Exception):
+
+class InvalidArgumentsError(BinarySkyException):
     '''Raises if arguments of an action are not correct.'''
 
-class InvalidActionError(Exception):
+class InvalidActionError(BinarySkyException):
     '''Raises when specified action does not exists or invalid.'''
 
-class NoWaterError(Exception):
+class NoWaterError(BinarySkyException):
     '''Raises if a robot standing on a dry square tries to pick up water.'''
 
-class RobotHaveNoWaterError(Exception):
+class RobotHaveNoWaterError(BinarySkyException):
     '''Raises if the robot does not carry any water, but tries to water a square.'''

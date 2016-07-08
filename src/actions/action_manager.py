@@ -15,8 +15,11 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import utils.logger
+from utils.exceptions import BinarySkyException
 from database.memcached_database import MemcachedDatabase
-from security.authenticator import Authenticator
+from database.exceptions import LockAlreadyAquiredError
+from security.authenticator import Authenticator, AuthenticationFailedError
 import actions.exceptions as exceptions
 from actions.status_action import StatusAction
 from actions.sense_action import SenseAction
@@ -48,13 +51,49 @@ class ActionManager:
             raise exceptions.InvalidArgumentsError(
                 "First argument (robot_id) should be a string, not {0}".format(type(robot_id)))
 
-        robot = self._database.get_robot(robot_id, for_update=True)
+        robot = None
+        try:
+            robot = self._database.get_robot(robot_id, for_update=True)
 
-        self._authenticator.authenticate_robot(robot, password)
+            self._authenticator.authenticate_robot(robot, password)
 
-        handler = self._get_action_handler(action_type)
+            handler = self._get_action_handler(action_type)
 
-        return handler.do_action(robot, args)
+            result = handler.do_action(robot, args)
+
+            # Reducing age and energy.
+            robot.set_energy(robot.get_energy() - 1)
+            robot.set_age(robot.get_age() - 1)
+
+            return result
+
+        except LockAlreadyAquiredError as error:
+            # Logging all concurrency errors, so we can investigate them later.
+            utils.logger.info("LockAlreadyAquiredError: {0}".format(error))
+            raise
+        except AuthenticationFailedError:
+            raise
+        except BinarySkyException:
+            # Concurrency exception is a fault of the server. Also, we ignored
+            # authentication errors. Otherwise, robot should lose energy and age.
+
+            # Note that we didn't handled unexpected errors (e.g. Exception class).
+            # XXX: Dirty code. It shouldn't rollback and/or commit database changes.
+            #      But right now, there's no better way.
+            self._database.rollback()
+            if robot is None:
+                # Seems we couldn't even get the robot. So, robot didn't do any actions
+                # and shouldn't lose energy and age.
+                raise
+
+            robot = self._database.get_robot(robot_id, for_update=True)
+            robot.set_energy(robot.get_energy() - 1)
+            robot.set_age(robot.get_age() - 1)
+
+            self._database.commit()
+
+            raise
+
 
     def _get_action_handler(self, action_type):
         '''Returns instance that should handle this action.'''

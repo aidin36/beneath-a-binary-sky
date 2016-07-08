@@ -15,7 +15,7 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from utils.exceptions import FatalError
+from utils.exceptions import BinarySkyException, FatalError
 
 
 class DatabaseFatalError(FatalError):
@@ -23,7 +23,7 @@ class DatabaseFatalError(FatalError):
     For example, if we cannot be sure that its data is still reliable.
     '''
 
-class DatabaseException(Exception):
+class DatabaseException(BinarySkyException):
     '''Base of errors in the database module.'''
 
 class LockAlreadyAquiredError(DatabaseException):
