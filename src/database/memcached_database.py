@@ -91,7 +91,7 @@ class MemcachedDatabase(Singleton):
             if not result:
                 raise exceptions.DatabaseException("A square is already exists in location {0}!".format(square.get_id()))
 
-    def get_square(self, x, y, for_update=False):
+    def get_square(self, location, for_update=False):
         '''Gets a map square.
 
         @param for_update: If you want to update this square (store its
@@ -102,7 +102,7 @@ class MemcachedDatabase(Singleton):
         @raise InvalidLocationError
         @raise LockAlreadyAquiredError
         '''
-        square_id = "{0},{1}".format(x, y)
+        square_id = "{0},{1}".format(*location)
 
         if for_update:
             self.get_lock(square_id)
@@ -112,7 +112,7 @@ class MemcachedDatabase(Singleton):
         result = mc_connection.get(square_id)
 
         if result is None:
-            raise exceptions.InvalidLocationError("Location {0},{1} is not valid.".format(x, y))
+            raise exceptions.InvalidLocationError("Location {0} is not valid.".format(square_id))
 
         if for_update:
             transaction = self._get_transaction()
@@ -120,11 +120,11 @@ class MemcachedDatabase(Singleton):
 
         # Calling all registered hooks and letting them update the object.
         for hook in self._hooks:
-            result = hook.square_got((x, y), result, for_update)
+            result = hook.square_got(location, result, for_update)
 
         return result
 
-    def add_robot(self, robot_object, x, y):
+    def add_robot(self, robot_object, location):
         '''Adds the new robot object to the specified position.
 
         @raise CannotAddRobotError
@@ -140,7 +140,7 @@ class MemcachedDatabase(Singleton):
         # because later we checked for the validity of `all_robots' list.
         self._add_robot_to_all_list(robot_object.get_id())
 
-        self._add_robot_to_location(robot_object.get_id(), x, y)
+        self._add_robot_to_location(robot_object.get_id(), location)
 
     def get_robot(self, robot_id, for_update=False):
         '''Gets the robot object with the specified ID from the database.
@@ -247,16 +247,16 @@ class MemcachedDatabase(Singleton):
         # We couldn't set it, after seven tries.
         raise exceptions.CouldNotSetValueBecauseOfConcurrencyError("Could not update `all_robots' object.")
 
-    def _add_robot_to_location(self, robot_id, x, y):
+    def _add_robot_to_location(self, robot_id, location):
         '''Adds the specified robot ID to the specified location on the map.'''
         mc_connection = MemcachedConnection().get_connection()
 
-        location_id = "{0},{1}".format(x, y)
+        location_id = "{0},{1}".format(*location)
         map_square = mc_connection.get(location_id)
 
         if map_square is None:
             # This exception should never happen!
-            raise exceptions.InvalidLocationError("MapSquare object on {0},{1} not found!".format(x, y))
+            raise exceptions.InvalidLocationError("MapSquare object on {0} not found!".format(location))
 
         map_square.set_robot_id(robot_id)
 

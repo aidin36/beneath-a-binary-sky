@@ -76,7 +76,7 @@ class PopulationControl:
                           self._robot_id_generator.get_password(),
                           name=robot_name)
 
-        self._world.add_robot(new_robot, born_location[0], born_location[1])
+        self._world.add_robot(new_robot, (born_location[0], born_location[1]))
 
         return {'robot_id': new_robot.get_id(),
                 'password': new_robot.get_password()}

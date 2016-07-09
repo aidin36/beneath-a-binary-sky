@@ -31,9 +31,9 @@ class TestInfoAction(unittest.TestCase):
         '''Gets information of a point, but don't care about the result.'''
         database = MemcachedDatabase()
         new_robot = Robot("1873yudhNCbueio", "ueijdnchiop")
-        new_robot.set_location(9, 7)
+        new_robot.set_location((9, 7))
 
-        database.add_robot(new_robot, 9, 7)
+        database.add_robot(new_robot, (9, 7))
         database.commit()
 
         action_manager = ActionManager()
@@ -45,9 +45,9 @@ class TestInfoAction(unittest.TestCase):
         '''Gets information of a specific point, and check its result.'''
         database = MemcachedDatabase()
         new_robot = Robot("oie982736hhjf", "lo098173635")
-        new_robot.set_location(9, 4)
+        new_robot.set_location((9, 4))
 
-        database.add_robot(new_robot, 9, 4)
+        database.add_robot(new_robot, (9, 4))
         database.commit()
 
         action_manager = ActionManager()
@@ -71,9 +71,9 @@ class TestInfoAction(unittest.TestCase):
         '''Tests getting a corner of the map.'''
         database = MemcachedDatabase()
         new_robot = Robot("0981kdjieu871", "oie987163")
-        new_robot.set_location(0, 1)
+        new_robot.set_location((0, 1))
 
-        database.add_robot(new_robot, 0, 1)
+        database.add_robot(new_robot, (0, 1))
         database.commit()
 
         action_manager = ActionManager()
@@ -94,7 +94,7 @@ class TestInfoAction(unittest.TestCase):
 
         world.plant(plant, (11, 4))
         database.commit()
-        world.add_robot(new_robot, 11, 4)
+        world.add_robot(new_robot, (11, 4))
         database.commit()
 
         action_manager = ActionManager()

@@ -62,9 +62,9 @@ class Robot(BaseObject):
         '''Returns a tuple containing (x, y)'''
         return (self._x, self._y)
 
-    def set_location(self, x, y):
-        self._x = x
-        self._y = y
+    def set_location(self, location):
+        self._x = location[0]
+        self._y = location[1]
 
     def set_has_water(self, value):
         self._has_water = value

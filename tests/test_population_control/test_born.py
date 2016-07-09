@@ -65,7 +65,7 @@ class TestBorn(unittest.TestCase):
 
         database.add_password("oijdnnh76153WEd")
         robot = Robot("test_with_parent_18873", "123")
-        database.add_robot(robot, 14, 1)
+        database.add_robot(robot, (14, 1))
         database.commit()
 
         population_control.execute_command("oijdnnh76153WEd", "born", ["test_with_parent_18873", "My Child"])

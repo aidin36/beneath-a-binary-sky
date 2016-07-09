@@ -35,13 +35,13 @@ class AddRobotTest(unittest.TestCase):
         database = MemcachedDatabase()
         robot = Robot("world_duplicate_robot_8722", "123")
 
-        self._world.add_robot(robot, 5, 1)
+        self._world.add_robot(robot, (5, 1))
 
         database.commit()
 
         robot_2 = Robot("world_duplicate_robot_8722", "1236")
         with self.assertRaises(CannotAddObjectError):
-            self._world.add_robot(robot_2, 5, 2)
+            self._world.add_robot(robot_2, (5, 2))
             database.commit()
 
     def test_ok(self):
@@ -49,7 +49,7 @@ class AddRobotTest(unittest.TestCase):
         database = MemcachedDatabase()
         robot = Robot("world_ok_robot_38364", "123")
 
-        self._world.add_robot(robot, 5, 0)
+        self._world.add_robot(robot, (5, 0))
         database.commit()
 
         gotted_robot = database.get_robot(robot.get_id())
@@ -65,7 +65,7 @@ class AddRobotTest(unittest.TestCase):
         robot = Robot("invalid_location_robot_1863", "123")
 
         with self.assertRaises(InvalidLocationError):
-            self._world.add_robot(robot, 19872, 1190)
+            self._world.add_robot(robot, (19872, 1190))
             database.commit()
 
     # TODO: Add this test after completion of the world class.

@@ -34,7 +34,7 @@ class TestWaterAction(unittest.TestCase):
         world = World()
 
         robot = Robot("198.1287.fkdfjei", "123")
-        robot.set_location(5, 0)
+        robot.set_location((5, 0))
         robot.set_has_water(True)
 
         plant = Plant()
@@ -59,10 +59,10 @@ class TestWaterAction(unittest.TestCase):
         '''Tests with a already-locked square.'''
         database = MemcachedDatabase()
         robot = Robot("oi981872yuweu.9887", "123")
-        robot.set_location(5, 0)
+        robot.set_location((5, 0))
         robot.set_has_water(True)
 
-        database.get_square(5, 0, for_update=True)
+        database.get_square((5, 0), for_update=True)
 
         action = WaterAction()
 
@@ -77,7 +77,7 @@ class TestWaterAction(unittest.TestCase):
         database = MemcachedDatabase()
 
         robot = Robot("098kk.ski87.99", "123")
-        robot.set_location(6, 0)
+        robot.set_location((6, 0))
         robot.set_has_water(True)
 
         action = WaterAction()
@@ -91,7 +91,7 @@ class TestWaterAction(unittest.TestCase):
     def test_have_no_water(self):
         '''Tests if a robot has water.'''
         robot = Robot("1223.9887.099", "123")
-        robot.set_location(6, 0)
+        robot.set_location((6, 0))
         robot.set_has_water(False)
 
         action = WaterAction()

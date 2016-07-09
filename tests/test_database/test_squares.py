@@ -36,10 +36,10 @@ class TestSquares(unittest.TestCase):
 
         database.add_square_row(row)
 
-        self.assertEqual(database.get_square(0, 999).get_type(), MapSquareTypes.SOIL)
-        self.assertEqual(database.get_square(1, 999).get_type(), MapSquareTypes.WATER)
-        self.assertEqual(database.get_square(2, 999).get_type(), MapSquareTypes.ROCK)
-        self.assertEqual(database.get_square(3, 999).get_type(), MapSquareTypes.SAND)
+        self.assertEqual(database.get_square((0, 999)).get_type(), MapSquareTypes.SOIL)
+        self.assertEqual(database.get_square((1, 999)).get_type(), MapSquareTypes.WATER)
+        self.assertEqual(database.get_square((2, 999)).get_type(), MapSquareTypes.ROCK)
+        self.assertEqual(database.get_square((3, 999)).get_type(), MapSquareTypes.SAND)
 
     def test_duplicate_add(self):
         '''Tests adding two squares at the same location. Should raise exception.'''
@@ -57,43 +57,43 @@ class TestSquares(unittest.TestCase):
         database = MemcachedDatabase()
 
         with self.assertRaises(InvalidLocationError):
-            database.get_square(19873, 1736)
+            database.get_square((19873, 1736))
 
     def test_for_update(self):
         '''Tests for_update flag of get_square method.'''
         database = MemcachedDatabase()
 
-        square = database.get_square(6, 1, for_update=True)
+        square = database.get_square((6, 1), for_update=True)
 
         # Testing the lock.
         with self.assertRaises(LockAlreadyAquiredError):
-            database.get_square(6, 1, for_update=True)
+            database.get_square((6, 1), for_update=True)
 
         # Testing commit.
         square.set_robot_id("ujhqi981762yhdg67")
 
         # It shouldn't be changed yet.
-        new_square = database.get_square(6, 1)
+        new_square = database.get_square((6, 1))
         self.assertNotEqual(square.get_robot_id(), new_square.get_robot_id())
 
         # Committing changes.
         database.commit()
-        new_square = database.get_square(6, 1)
+        new_square = database.get_square((6, 1))
         self.assertEqual(square.get_robot_id(), new_square.get_robot_id())
 
         # Lock should be freed.
-        new_square = database.get_square(6, 1, for_update=True)
+        new_square = database.get_square((6, 1), for_update=True)
         database.rollback()
 
     def test_rollback(self):
         '''Tests if database rolls back the changes correctly.'''
         database = MemcachedDatabase()
 
-        square = database.get_square(6, 2, for_update=True)
+        square = database.get_square((6, 2), for_update=True)
         square.set_robot_id("iuwuyehdmn990198283")
 
         database.rollback()
         database.commit()
 
-        new_square = database.get_square(6, 2)
+        new_square = database.get_square((6, 2))
         self.assertNotEqual(square.get_robot_id(), new_square.get_robot_id())

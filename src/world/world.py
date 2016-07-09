@@ -37,22 +37,21 @@ class World(Singleton):
         '''Returns size of the world.'''
         return self._size
 
-    def add_robot(self, robot, x, y):
+    def add_robot(self, robot, location):
         '''Adds a robot to the world.
         It tries to find the nearest empty point to the specified point.
 
         @param robot: Instance of objects.robot.Robot.
-        @param x: Location to try to add the robot. (X)
-        @param y: Location to try to add the robot. (Y)
+        @param location: Location to try to add the robot. (x, y)
         '''
-        for square_x, square_y in SquareInterator((x, y), self._size):
+        for square_x, square_y in SquareInterator(location, self._size):
             try:
                 square_object = self.get_square((square_x, square_y), for_update=True)
 
                 # Checking if something blocked this square.
                 if not square_object.is_blocking():
-                    robot.set_location(square_x, square_y)
-                    self._database.add_robot(robot, square_x, square_y)
+                    robot.set_location((square_x, square_y))
+                    self._database.add_robot(robot, (square_x, square_y))
                     # Done.
                     return
 
@@ -79,7 +78,7 @@ class World(Singleton):
         origin_square.set_robot_id(None)
         destination_square.set_robot_id(robot.get_id())
 
-        robot.set_location(*destination)
+        robot.set_location(destination)
 
     def plant(self, plant, location):
         '''Plant a plant on the specified location.'''
@@ -104,7 +103,7 @@ class World(Singleton):
             changes back to the database) you should set this flag.
             Note that it automatically updates the changes if transaction commits.
         '''
-        return self._database.get_square(*location, for_update=for_update)
+        return self._database.get_square(location, for_update=for_update)
 
     def load_from_file(self, file_path):
         '''Loads a world from the specified file.'''

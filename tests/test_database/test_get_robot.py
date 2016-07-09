@@ -30,7 +30,7 @@ class TestGetRobot(unittest.TestCase):
 
         robot_id = "test_for_update_18762"
         robot = Robot(robot_id, "123")
-        database.add_robot(robot, 10, 0)
+        database.add_robot(robot, (10, 0))
         database.commit()
 
         new_robot = database.get_robot(robot_id, for_update=True)
@@ -61,7 +61,7 @@ class TestGetRobot(unittest.TestCase):
 
         robot_id = "test_rollback_18098"
         robot = Robot(robot_id, "123")
-        database.add_robot(robot, 11, 0)
+        database.add_robot(robot, (11, 0))
         database.commit()
 
         new_robot = database.get_robot(robot_id, for_update=True)

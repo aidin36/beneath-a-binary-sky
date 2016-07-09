@@ -36,7 +36,7 @@ class TestPlantAction(unittest.TestCase):
         plant_action = PlantAction()
 
         robot = Robot("18873.182873.1123", "123")
-        robot.set_location(0, 17)
+        robot.set_location((0, 17))
 
         plant_action.do_action(robot, ["18873.182873.1123"])
 

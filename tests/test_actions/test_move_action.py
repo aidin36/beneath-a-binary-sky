@@ -35,7 +35,7 @@ class TestMoveAction(unittest.TestCase):
         world = World()
         database = MemcachedDatabase()
 
-        world.add_robot(robot, 10, 2)
+        world.add_robot(robot, (10, 2))
         database.commit()
 
         action_manager = ActionManager()
@@ -89,7 +89,7 @@ class TestMoveAction(unittest.TestCase):
         action_manager = ActionManager()
         database = MemcachedDatabase()
 
-        world.add_robot(robot, 14, 2)
+        world.add_robot(robot, (14, 2))
         database.commit()
 
         with self.assertRaises(InvalidLocationError):
@@ -105,7 +105,7 @@ class TestMoveAction(unittest.TestCase):
         action_manager = ActionManager()
         database = MemcachedDatabase()
 
-        world.add_robot(robot, 11, 6)
+        world.add_robot(robot, (11, 6))
         database.commit()
 
         with self.assertRaises(LocationIsBlockedError):
@@ -119,7 +119,7 @@ class TestMoveAction(unittest.TestCase):
         action_manager = ActionManager()
         database = MemcachedDatabase()
 
-        world.add_robot(robot, 12, 6)
+        world.add_robot(robot, (12, 6))
         database.commit()
 
         with self.assertRaises(InvalidArgumentsError):
@@ -150,10 +150,10 @@ class TestMoveAction(unittest.TestCase):
         action_manager = ActionManager()
         database = MemcachedDatabase()
 
-        world.add_robot(robot, 13, 6)
+        world.add_robot(robot, (13, 6))
         database.commit()
 
-        database.get_square(13, 7, for_update=True)
+        database.get_square((13, 7), for_update=True)
 
         with self.assertRaises(LockAlreadyAquiredError):
             action_manager.do_action("123", "move", [robot_id, "S"])

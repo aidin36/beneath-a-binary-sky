@@ -44,7 +44,7 @@ class TestPickWater(unittest.TestCase):
         '''Tests a good scenario.'''
         action = PickWaterAction()
         robot = Robot("19882ukfdjfhuoIE", "123")
-        robot.set_location(0, 18)
+        robot.set_location((0, 18))
 
         action.do_action(robot, ["19882ukfdjfhuoIE"])
 
@@ -55,11 +55,11 @@ class TestPickWater(unittest.TestCase):
         action = PickWaterAction()
         robot = Robot("19882ukfdjfhuoIE", "123")
 
-        robot.set_location(1, 18)
+        robot.set_location((1, 18))
         with self.assertRaises(NoWaterError):
             action.do_action(robot, ["19882ukfdjfhuoIE"])
 
-        robot.set_location(2, 18)
+        robot.set_location((2, 18))
         with self.assertRaises(NoWaterError):
             action.do_action(robot, ["19882ukfdjfhuoIE"])
 
@@ -67,7 +67,7 @@ class TestPickWater(unittest.TestCase):
         '''Tests invalid arguments.'''
         action = PickWaterAction()
         robot = Robot("19882ukfdjfhuoIE", "123")
-        robot.set_location(0, 18)
+        robot.set_location((0, 18))
 
         with self.assertRaises(InvalidArgumentsError):
             action.do_action(robot, [])

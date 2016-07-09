@@ -35,7 +35,7 @@ class TestAddRobot(unittest.TestCase):
         new_robot = Robot("test_simple_add_", "123")
 
         # No exception should be raise.
-        database.add_robot(new_robot, 0, 0)
+        database.add_robot(new_robot, (0, 0))
         database.commit()
 
         gotted_robot = database.get_robot("test_simple_add_")
@@ -49,12 +49,12 @@ class TestAddRobot(unittest.TestCase):
         database = MemcachedDatabase()
 
         new_robot = Robot("test_duplicate_add_", "123")
-        database.add_robot(new_robot, 1, 1)
+        database.add_robot(new_robot, (1, 1))
         database.commit()
 
         robot2 = Robot("test_duplicate_add_", "123")
         with self.assertRaises(CannotAddObjectError):
-            database.add_robot(robot2, 1, 2)
+            database.add_robot(robot2, (1, 2))
             database.commit()
 
     def test_concurrent_add_failure(self):
@@ -72,7 +72,7 @@ class TestAddRobot(unittest.TestCase):
             database = MemcachedDatabase()
 
             with self.assertRaises(CouldNotSetValueBecauseOfConcurrencyError):
-                database.add_robot(new_robot, 1, 1)
+                database.add_robot(new_robot, (1, 1))
                 database.commit()
 
         finally:
@@ -87,7 +87,7 @@ class TestAddRobot(unittest.TestCase):
         database = MemcachedDatabase()
 
         new_robot = Robot("test_rollback_87162", "123")
-        database.add_robot(new_robot, 1, 1)
+        database.add_robot(new_robot, (1, 1))
 
         database.rollback()
         database.commit()
@@ -102,5 +102,5 @@ class TestAddRobot(unittest.TestCase):
         new_robot = Robot("test_invalid_location_19887", "123")
 
         with self.assertRaises(InvalidLocationError):
-            database.add_robot(new_robot, 91872, 16652)
+            database.add_robot(new_robot, (91872, 16652))
             database.commit()

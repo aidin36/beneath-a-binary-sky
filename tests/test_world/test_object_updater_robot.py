@@ -37,7 +37,7 @@ class TestObjectUpdaterRobot(unittest.TestCase):
         robot = Robot("test_out_of_life_robot_9022", "123")
         robot.set_life(0)
 
-        world.add_robot(robot, 0, 9)
+        world.add_robot(robot, (0, 9))
         database.commit()
 
         received_robot = database.get_robot("test_out_of_life_robot_9022", for_update=False)
@@ -54,7 +54,7 @@ class TestObjectUpdaterRobot(unittest.TestCase):
         robot = Robot("test_out_of_energy_robot_18773", "123")
         robot.set_energy(0)
 
-        world.add_robot(robot, 1, 9)
+        world.add_robot(robot, (1, 9))
         database.commit()
 
         got_robot = database.get_robot("test_out_of_energy_robot_18773", for_update=False)
@@ -72,7 +72,7 @@ class TestObjectUpdaterRobot(unittest.TestCase):
         # Setting the energy to zero, so the updater tries to update the square too.
         robot.set_energy(0)
 
-        world.add_robot(robot, 5, 9)
+        world.add_robot(robot, (5, 9))
         database.commit()
 
         world.get_square((5, 9), for_update=True)

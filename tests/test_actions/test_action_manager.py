@@ -55,7 +55,7 @@ class TestActionManager(unittest.TestCase):
     def test_invalid_password(self):
         '''Test if ActionManager authenticate passwords correctly.'''
         robot = Robot("test_invalid_password_95312", "andhue-ifue876-fkdnpw-1")
-        self._database.add_robot(robot, 3, 1)
+        self._database.add_robot(robot, (3, 1))
         self._database.commit()
 
         with self.assertRaises(AuthenticationFailedError):
@@ -65,7 +65,7 @@ class TestActionManager(unittest.TestCase):
         '''Test if ActionManager checks a dead robot.'''
         robot = Robot("test_dead_robot_98176", "1234")
         robot.set_alive(False)
-        self._database.add_robot(robot, 3, 2)
+        self._database.add_robot(robot, (3, 2))
         self._database.commit()
 
         with self.assertRaises(AuthenticationFailedError):
@@ -74,7 +74,7 @@ class TestActionManager(unittest.TestCase):
     def test_bad_actions(self):
         '''Test wrong action IDs.'''
         robot = Robot("test_bad_actions_2376", "123")
-        self._database.add_robot(robot, 4, 1)
+        self._database.add_robot(robot, (4, 1))
         self._database.commit()
 
         with self.assertRaises(actions.exceptions.InvalidActionError):
@@ -95,7 +95,7 @@ class TestActionManager(unittest.TestCase):
     def test_ok(self):
         '''Execute a fine action.'''
         robot = Robot("test_ok_action_3278", "4467yrt-ddfjh-1u872-oiie")
-        self._database.add_robot(robot, 3, 3)
+        self._database.add_robot(robot, (3, 3))
         self._database.commit()
 
         initial_energy = robot.get_energy()
@@ -114,7 +114,7 @@ class TestActionManager(unittest.TestCase):
     def test_losing_energy_on_error(self):
         '''Tests if ActionManager reduces energy and age after an exception.'''
         robot = Robot("test_losing_energy_on_error_981", "091oikjdmncj")
-        self._database.add_robot(robot, 5, 3)
+        self._database.add_robot(robot, (5, 3))
         self._database.commit()
 
         initial_energy = robot.get_energy()

@@ -54,11 +54,11 @@ class ObjectUpdater(DatabaseHook):
 
             # Removing the robot from its location.
             try:
-                square = self._database.get_square(*robot_object.get_location(), for_update=True)
+                square = self._database.get_square(robot_object.get_location(), for_update=True)
             except LockAlreadyAquiredError:
                 # Trying one more time.
                 time.sleep(0.02)
-                square = self._database.get_square(*robot_object.get_location(), for_update=True)
+                square = self._database.get_square(robot_object.get_location(), for_update=True)
 
             square.set_robot_id(None)
 
@@ -92,11 +92,11 @@ class ObjectUpdater(DatabaseHook):
         if not locked_for_update:
             # This will call this method again.
             try:
-                return self._database.get_square(*location, for_update=True)
+                return self._database.get_square(location, for_update=True)
             except LockAlreadyAquiredError:
                 # Trying one more time.
                 time.sleep(0.02)
-                return self._database.get_square(*location, for_update=True)
+                return self._database.get_square(location, for_update=True)
 
         plant.set_age(plant.get_age() + passed_cycles)
         plant.set_water_level(plant.get_water_level() - (passed_cycles * self._configs.get_plant_lose_water_in_cycle()))
