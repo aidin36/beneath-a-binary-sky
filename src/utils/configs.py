@@ -45,6 +45,10 @@ class Configs(Singleton):
         return self._config_parser.getint("robot", "initial_life",
                                           fallback=500)
 
+    def get_robots_actions_delay(self):
+        return self._config_parser.getint("robot", "actions_delay",
+                                          fallback=30)
+
     def get_plant_cylce(self):
         return self._config_parser.getint("plant", "cycle",
                                           fallback=50)

@@ -42,6 +42,7 @@ class Robot(BaseObject):
         self._has_water = False
         self._energy = configs.get_robots_initial_energy()
         self._life = configs.get_robots_initial_life()
+        self._last_executed_action_time = 0
 
     def get_id(self):
         return self._id
@@ -83,3 +84,9 @@ class Robot(BaseObject):
 
     def get_life(self):
         return self._life
+
+    def get_last_executed_action_time(self):
+        return self._last_executed_action_time
+
+    def set_last_executed_action_time(self, value):
+        self._last_executed_action_time = value

@@ -15,6 +15,7 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import time
 import unittest
 
 import actions.exceptions
@@ -136,3 +137,20 @@ class TestActionManager(unittest.TestCase):
         robot = self._database.get_robot("test_losing_energy_on_error_981")
         self.assertEqual(robot.get_energy(), initial_energy - 1)
         self.assertEqual(robot.get_life(), initial_age - 1)
+
+    def test_delay(self):
+        '''Tests delay between robot actions.'''
+        robot = Robot("test_delay_1223", "09112345")
+        self._database.add_robot(robot, (6, 3))
+        self._database.commit()
+
+        self._action_manager.do_action("09112345", "sense", [robot.get_id()])
+        self._database.commit()
+
+        start_time = time.time()
+        self._action_manager.do_action("09112345", "sense", [robot.get_id()])
+        elapsed_time = time.time() - start_time
+        self._database.commit()
+
+        # one millisecond reduced from delay to cover error.
+        self.assertGreater(elapsed_time, 0.029)

@@ -15,7 +15,10 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import time
+
 import utils.logger
+from utils.configs import Configs
 from utils.exceptions import BinarySkyException
 from database.memcached_database import MemcachedDatabase
 from database.exceptions import LockAlreadyAquiredError
@@ -33,6 +36,9 @@ class ActionManager:
     def __init__(self):
         self._authenticator = Authenticator()
         self._database = MemcachedDatabase()
+
+        configs = Configs()
+        self._robots_action_delay = configs.get_robots_actions_delay() / 1000
 
         self._actions = {'status': StatusAction(),
                          'sense': SenseAction(),
@@ -57,6 +63,11 @@ class ActionManager:
 
             self._authenticator.authenticate_robot(robot, password)
 
+            actions_delay = time.time() - robot.get_last_executed_action_time()
+            if actions_delay < self._robots_action_delay:
+                # Robot is sending actions too fast. Putting a delay between its actions.
+                time.sleep(self._robots_action_delay - actions_delay)
+
             handler = self._get_action_handler(action_type)
 
             result = handler.do_action(robot, args)
@@ -64,6 +75,9 @@ class ActionManager:
             # Reducing age and energy.
             robot.set_energy(robot.get_energy() - 1)
             robot.set_life(robot.get_life() - 1)
+
+            # Updating last executed action time.
+            robot.set_last_executed_action_time(time.time())
 
             return result
 
@@ -89,6 +103,7 @@ class ActionManager:
             robot = self._database.get_robot(robot_id, for_update=True)
             robot.set_energy(robot.get_energy() - 1)
             robot.set_life(robot.get_life() - 1)
+            robot.set_last_executed_action_time(time.time())
 
             self._database.commit()
 
