@@ -29,6 +29,7 @@ from actions.sense_action import SenseAction
 from actions.move_action import MoveAction
 from actions.plant_action import PlantAction
 from actions.pick_water import PickWaterAction
+from actions.info_action import InfoAction
 
 
 class ActionManager:
@@ -44,7 +45,8 @@ class ActionManager:
                          'sense': SenseAction(),
                          'move': MoveAction(),
                          'plant': PlantAction(),
-                         'pick_water': PickWaterAction()}
+                         'pick_water': PickWaterAction(),
+                         'info': InfoAction()}
 
 
     def do_action(self, password, action_type, args):
