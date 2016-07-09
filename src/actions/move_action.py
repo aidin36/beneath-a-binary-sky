@@ -59,7 +59,7 @@ class MoveAction(Action):
             # Waiting for a moment, and trying one more time.
             # Client shouldn't receive an error if, for example, someone updating a plant on these squares.
             utils.logger.info("Concurrency when trying to move a robot.")
-            time.sleep(0.05)
+            time.sleep(0.02)
             self._do_move(robot, destination)
 
     def _do_move(self, robot, destination):

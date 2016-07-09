@@ -45,7 +45,7 @@ class WaterAction(Action):
             square = self._world.get_square(robot.get_location(), for_update=True)
         except LockAlreadyAquiredError:
             # Waiting a little, and trying one more time.
-            time.sleep(0.03)
+            time.sleep(0.02)
             square = self._world.get_square(robot.get_location(), for_update=True)
 
         # Note: we don't raise an exception if there's no plant. A robot can waste its water.
