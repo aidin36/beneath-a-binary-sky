@@ -72,10 +72,10 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         world = World()
         database = MemcachedDatabase()
 
-        world.plant(plant, (5, 8))
+        world.plant(plant, (11, 8))
         database.commit()
 
-        square = world.get_square((5, 8), for_update=True)
+        square = world.get_square((11, 8), for_update=True)
         plant = square.get_plant()
         plant.set_age(40)
         database.commit()
@@ -83,7 +83,7 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         # Sleeping one cycle.
         time.sleep(0.021)
 
-        square = world.get_square((5, 8), for_update=False)
+        square = world.get_square((11, 8), for_update=False)
         self.assertIsNone(square.get_plant())
 
     def test_no_cycle_passed(self):
