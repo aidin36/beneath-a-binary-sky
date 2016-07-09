@@ -165,6 +165,18 @@ be intelligent enough to not waste its water.
 *result*: None
 
 
+**eat**
+
+Orders the robot to eat the plant in the current location. If the plant is matured, the robot will receive energy.
+Else, plant will be removed from the world, but robot will gain nothing.
+
+Client receives an error if there's no plant on the robot's location.
+
+*arguments*: None
+
+*result*: None
+
+
 Exceptions
 ----------
 
