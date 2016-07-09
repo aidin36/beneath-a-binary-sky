@@ -17,6 +17,7 @@
 
 import unittest
 
+from database.exceptions import LockAlreadyAquiredError
 from utils.configs import Configs
 from actions.action_manager import ActionManager
 from actions.exceptions import InvalidArgumentsError, NoPlantToEat
@@ -103,5 +104,16 @@ class TestEatAction(unittest.TestCase):
         database = MemcachedDatabase()
 
         with self.assertRaises(NoPlantToEat):
+            action_manager.do_action("123", "eat", [TestEatAction.ROBOT_ID])
+        database.rollback()
+
+    def test_locked(self):
+        '''Tests with a locked square.'''
+        action_manager = ActionManager()
+        database = MemcachedDatabase()
+
+        database.get_square(TestEatAction.LOCATION, for_update=True)
+
+        with self.assertRaises(LockAlreadyAquiredError):
             action_manager.do_action("123", "eat", [TestEatAction.ROBOT_ID])
         database.rollback()
