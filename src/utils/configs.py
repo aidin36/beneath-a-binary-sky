@@ -38,9 +38,9 @@ class Configs(Singleton):
                                        fallback=11542)
 
     def get_robots_initial_energy(self):
-        return self._config_parser.get("robots", "initial_energy",
+        return self._config_parser.get("robot", "initial_energy",
                                        fallback=75)
 
     def get_robots_initial_life(self):
-        return self._config_parser.get("robots", "initial_life",
+        return self._config_parser.get("robot", "initial_life",
                                        fallback=500)
