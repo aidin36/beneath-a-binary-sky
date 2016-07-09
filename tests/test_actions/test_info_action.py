@@ -35,7 +35,7 @@ class TestInfoAction(unittest.TestCase):
 
         info = action.do_action(robot, [robot.get_id()])
 
-        self.assertEqual(info['world_size'], world.get_size())
+        self.assertEqual(info['world_size'], '{0},{1}'.format(*world.get_size()))
         self.assertEqual(info['plant_max_age'], configs.get_plant_max_age())
         self.assertEqual(info['plant_matured_age'], configs.get_plant_matured_age())
         self.assertEqual(info['action_delay'], configs.get_robots_actions_delay())

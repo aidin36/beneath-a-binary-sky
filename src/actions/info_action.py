@@ -35,7 +35,7 @@ class InfoAction(Action):
         if len(args) != 1:
             raise InvalidArgumentsError("`info' takes no arguments.")
 
-        return {'world_size': self._world.get_size(),
+        return {'world_size': '{0},{1}'.format(*self._world.get_size()),
                 'plant_max_age': self._configs.get_plant_max_age(),
                 'plant_matured_age': self._configs.get_plant_matured_age(),
                 'action_delay': self._configs.get_robots_actions_delay()}
