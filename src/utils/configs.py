@@ -64,3 +64,7 @@ class Configs(Singleton):
     def get_plant_lose_water_in_cycle(self):
         return self._config_parser.getint("plant", "lose_water_in_cycle",
                                           fallback=5)
+
+    def get_plant_energy(self):
+        return self._config_parser.getint("plant", "energy",
+                                          fallback=150)

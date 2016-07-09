@@ -29,3 +29,6 @@ class NoWaterError(BinarySkyException):
 
 class RobotHaveNoWaterError(BinarySkyException):
     '''Raises if the robot does not carry any water, but tries to water a square.'''
+
+class NoPlantToEat(BinarySkyException):
+    '''Raises if a robot tries to eat a plant, but there's nothing there.'''

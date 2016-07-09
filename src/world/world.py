@@ -84,9 +84,6 @@ class World(Singleton):
         '''Plant a plant on the specified location.'''
         square = self.get_square(location, for_update=True)
 
-        if square.is_blocking():
-            raise exceptions.LocationIsBlockedError("Location {0} is blocked.".format(location))
-
         if square.get_type() != MapSquareTypes.SOIL:
             raise exceptions.CannotPlantHereError("Cannot plant on {0} square type.".format(square.get_type()))
 

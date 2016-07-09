@@ -50,14 +50,6 @@ class TestPlantAction(unittest.TestCase):
         new_plant = Plant()
         world.plant(new_plant, (0, 16))
 
-    def test_blocking_location(self):
-        '''Tests planting on a blocking location.'''
-        world = World()
-
-        new_plant = Plant()
-        with self.assertRaises(LocationIsBlockedError):
-            world.plant(new_plant, (1, 16))
-
     def test_non_soil_location(self):
         '''Tests planting on a non-soil location.'''
         world = World()
