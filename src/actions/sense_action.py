@@ -38,10 +38,16 @@ class SenseAction(Action):
             square_object = self._world.get_square((square_x, square_y))
 
             is_there_a_robot = square_object.get_robot_id() is not None
-            is_there_a_plant = square_object.get_plant() is not None
+
+            plant_info = None
+            plant = square_object.get_plant()
+            if plant is not None:
+                plant_info = {'water_level': plant.get_water_level(),
+                              'matured': plant.is_matured(),
+                              'age': plant.get_age()}
 
             result["{0},{1}".format(square_x, square_y)] = {"surface_type": square_object.get_type(),
                                                             "robot": is_there_a_robot,
-                                                            "plant": is_there_a_plant}
+                                                            "plant": plant_info}
 
         return result

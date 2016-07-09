@@ -20,7 +20,9 @@ import unittest
 from objects.map_square_types import MapSquareTypes
 from actions.action_manager import ActionManager
 from objects.robot import Robot
+from objects.plant import Plant
 from database.memcached_database import MemcachedDatabase
+from world.world import World
 
 
 class TestInfoAction(unittest.TestCase):
@@ -54,16 +56,16 @@ class TestInfoAction(unittest.TestCase):
         self.assertEqual(len(info), 9)
         self.assertEqual(info["9,4"], {"surface_type": MapSquareTypes.SOIL,
                                        "robot": True,
-                                       "plant": False})
+                                       "plant": None})
         self.assertEqual(info["9,3"], {"surface_type": MapSquareTypes.WATER,
                                        "robot": False,
-                                       "plant": False})
+                                       "plant": None})
         self.assertEqual(info["10,5"], {"surface_type": MapSquareTypes.SOIL,
                                         "robot": False,
-                                        "plant": False})
+                                        "plant": None})
         self.assertEqual(info["8,4"], {"surface_type": MapSquareTypes.SOIL,
                                        "robot": False,
-                                       "plant": False})
+                                       "plant": None})
 
     def test_corner(self):
         '''Tests getting a corner of the map.'''
@@ -78,3 +80,28 @@ class TestInfoAction(unittest.TestCase):
         info = action_manager.do_action(new_robot.get_password(), "sense", [new_robot.get_id()])
 
         self.assertEqual(len(info), 6)
+
+    def test_plant(self):
+        '''Tests sensing a plant.'''
+        world = World()
+        database = MemcachedDatabase()
+
+        new_robot = Robot("poeiekfm98871", "123")
+
+        plant = Plant()
+        plant.set_age(12)
+        plant.set_water_level(60)
+
+        world.plant(plant, (11, 4))
+        database.commit()
+        world.add_robot(new_robot, 11, 4)
+        database.commit()
+
+        action_manager = ActionManager()
+        info = action_manager.do_action(new_robot.get_password(), "sense", [new_robot.get_id()])
+
+        self.assertEqual(info["11,4"], {"surface_type": MapSquareTypes.SOIL,
+                                        "robot": True,
+                                        "plant": {"age": 12,
+                                                  "water_level": 60,
+                                                  "matured": True}})
