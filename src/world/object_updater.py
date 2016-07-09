@@ -54,7 +54,6 @@ class ObjectUpdater(DatabaseHook):
 
             # Removing the robot from its location.
             try:
-
                 square = self._database.get_square(*robot_object.get_location(), for_update=True)
             except LockAlreadyAquiredError:
                 # Trying one more time.

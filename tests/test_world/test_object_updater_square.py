@@ -18,6 +18,7 @@
 import unittest
 import time
 
+from database.exceptions import LockAlreadyAquiredError
 from database.memcached_database import MemcachedDatabase
 from world.world import World
 from objects.plant import Plant
@@ -105,3 +106,21 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         self.assertEqual(received_plant.get_age(), plant.get_age())
         self.assertEqual(received_plant.get_water_level(), plant.get_water_level())
         self.assertEqual(received_plant.get_last_update(), plant.get_last_update())
+
+    def test_locked_square(self):
+        '''Tests updating a locked square.'''
+        plant = Plant()
+        world = World()
+        database = MemcachedDatabase()
+
+        world.plant(plant, (7, 8))
+        database.commit()
+
+        # Locking the square.
+        world.get_square((7, 8), for_update=True)
+
+        # Sleeping one cycle.
+        time.sleep(0.021)
+
+        with self.assertRaises(LockAlreadyAquiredError):
+            world.get_square((7, 8), for_update=False)

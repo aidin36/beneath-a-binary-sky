@@ -62,3 +62,20 @@ class TestObjectUpdaterRobot(unittest.TestCase):
 
         square = world.get_square((1, 9))
         self.assertIsNone(square.get_robot_id())
+
+    def test_locked(self):
+        '''Tests with a locked square.'''
+        database = MemcachedDatabase()
+        world = World()
+
+        robot = Robot("test_locked_robot_190083", "123")
+        # Setting the energy to zero, so the updater tries to update the square too.
+        robot.set_energy(0)
+
+        world.add_robot(robot, 5, 9)
+        database.commit()
+
+        world.get_square((5, 9), for_update=True)
+
+        with self.assertRaises(LockAlreadyAquiredError):
+            database.get_robot(robot.get_id(), for_update=True)
