@@ -17,12 +17,13 @@
 
 import unittest
 
+from database.exceptions import LockAlreadyAquiredError
 from database.memcached_database import MemcachedDatabase
 from world.world import World
 from objects.robot import Robot
 
 
-class TestObjectUpdater(unittest.TestCase):
+class TestObjectUpdaterRobot(unittest.TestCase):
 
     def tearDown(self):
         # Rolling back any remaning things.

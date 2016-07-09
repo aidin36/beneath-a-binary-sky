@@ -120,7 +120,7 @@ class MemcachedDatabase(Singleton):
 
         # Calling all registered hooks and letting them update the object.
         for hook in self._hooks:
-            result = hook.square_got(result, for_update)
+            result = hook.square_got((x, y), result, for_update)
 
         return result
 

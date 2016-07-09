@@ -35,12 +35,28 @@ class Configs(Singleton):
 
     def get_database_port(self):
         return self._config_parser.get("database", "port",
-                                       fallback=11542)
+                                       fallback="11542")
 
     def get_robots_initial_energy(self):
-        return self._config_parser.get("robot", "initial_energy",
-                                       fallback=75)
+        return self._config_parser.getint("robot", "initial_energy",
+                                          fallback=75)
 
     def get_robots_initial_life(self):
-        return self._config_parser.get("robot", "initial_life",
-                                       fallback=500)
+        return self._config_parser.getint("robot", "initial_life",
+                                          fallback=500)
+
+    def get_plant_cylce(self):
+        return self._config_parser.getint("plant", "cycle",
+                                          fallback=50)
+
+    def get_plant_max_age(self):
+        return self._config_parser.getint("plant", "max_age",
+                                          fallback=70)
+
+    def get_plant_matured_age(self):
+        return self._config_parser.getint("plant", "matured_age",
+                                          fallback=40)
+
+    def get_plant_lose_water_in_cycle(self):
+        return self._config_parser.getint("plant", "lose_water_in_cycle",
+                                          fallback=5)

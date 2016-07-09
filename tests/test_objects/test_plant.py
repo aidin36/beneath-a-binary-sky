@@ -15,38 +15,16 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-import time
+import unittest
 
-from objects.base_object import BaseObject
-from utils.configs import Configs
+from objects.plant import Plant
 
 
-class Plant(BaseObject):
+class TestPlant(unittest.TestCase):
 
-    def __init__(self):
-        super().__init__()
+    def test_matured(self):
+        plant = Plant()
 
-        self._age = 0
-        self._water_level = 100
-        self._last_update = time.time()
+        plant.set_age(4)
 
-    def get_age(self):
-        return self._age
-
-    def set_age(self, value):
-        self._age = value
-
-    def set_water_level(self, value):
-        self._water_level = value
-
-    def get_water_level(self):
-        return self._water_level
-
-    def get_last_update(self):
-        return self._last_update
-
-    def set_last_update(self, value):
-        self._last_update = value
-
-    def is_matured(self):
-        return (self._age >= Configs().get_plant_matured_age())
+        self.assertTrue(plant.is_matured())

@@ -17,6 +17,8 @@
 
 import time
 
+import math
+
 from utils.configs import Configs
 from database.memcached_database import MemcachedDatabase
 from database.database_hook import DatabaseHook
@@ -52,10 +54,11 @@ class ObjectUpdater(DatabaseHook):
 
             # Removing the robot from its location.
             try:
+
                 square = self._database.get_square(*robot_object.get_location(), for_update=True)
             except LockAlreadyAquiredError:
                 # Trying one more time.
-                time.sleep(0.03)
+                time.sleep(0.02)
                 square = self._database.get_square(*robot_object.get_location(), for_update=True)
 
             square.set_robot_id(None)
@@ -72,6 +75,37 @@ class ObjectUpdater(DatabaseHook):
 
         return robot_object
 
-    def square_got(self, square_object, locked_for_update):
+    def square_got(self, location, square_object, locked_for_update):
         '''Checks and updates specified square object.'''
+        plant = square_object.get_plant()
+
+        if plant is None:
+            return square_object
+
+        # Time passed from the last time this plant updated.
+        last_update = time.time() - plant.get_last_update()
+        passed_cycles = math.floor(last_update / (self._configs.get_plant_cylce() / 1000))
+
+        if passed_cycles <= 0:
+            # No cycle passed, no need to be updated.
+            return square_object
+
+        if not locked_for_update:
+            # This will call this method again.
+            try:
+                return self._database.get_square(*location, for_update=True)
+            except LockAlreadyAquiredError:
+                # Trying one more time.
+                time.sleep(0.02)
+                return self._database.get_square(*location, for_update=True)
+
+        plant.set_age(plant.get_age() + passed_cycles)
+        plant.set_water_level(plant.get_water_level() - (passed_cycles * self._configs.get_plant_lose_water_in_cycle()))
+
+        if plant.get_age() > self._configs.get_plant_max_age() or plant.get_water_level() <= 0:
+            # Plant is dead! Removing it from the world.
+            square_object.set_plant(None)
+
+        plant.set_last_update(time.time())
+
         return square_object

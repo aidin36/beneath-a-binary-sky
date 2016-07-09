@@ -31,13 +31,14 @@ class DatabaseHook:
         '''
         return robot_object
 
-    def square_got(self, square_object, locked_for_update):
+    def square_got(self, location, square_object, locked_for_update):
         '''Calls when a square got from database. This method can update
         the object.
 
         Should return the `square_object' again
 
-        @param robot_object: Object got from database.
+        @param location: location of the square object.
+        @param square_object: Object got from database.
         @param locked_for_update: If true, it means the object is already locked
             and will be updated on commit.
         '''
