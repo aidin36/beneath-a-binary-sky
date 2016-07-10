@@ -25,7 +25,13 @@ class InfoAction(Action):
 
     def __init__(self):
         self._world = World()
-        self._configs = Configs()
+        configs = Configs()
+
+        self._result = {'world_size': '{0},{1}'.format(*self._world.get_size()),
+                        'plant_max_age': configs.get_plant_max_age(),
+                        'plant_matured_age': configs.get_plant_matured_age(),
+                        'action_delay': configs.get_robots_actions_delay(),
+                        'maximum_energy': configs.get_robots_maximum_energy()}
 
     def do_action(self, robot, args):
         '''Returns information about the world..
@@ -35,7 +41,4 @@ class InfoAction(Action):
         if len(args) != 1:
             raise InvalidArgumentsError("`info' takes no arguments.")
 
-        return {'world_size': '{0},{1}'.format(*self._world.get_size()),
-                'plant_max_age': self._configs.get_plant_max_age(),
-                'plant_matured_age': self._configs.get_plant_matured_age(),
-                'action_delay': self._configs.get_robots_actions_delay()}
+        return self._result

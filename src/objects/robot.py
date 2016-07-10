@@ -43,6 +43,7 @@ class Robot(BaseObject):
         self._energy = configs.get_robots_initial_energy()
         self._life = configs.get_robots_initial_life()
         self._last_executed_action_time = 0
+        self._maximum_energy = configs.get_robots_maximum_energy()
 
     def get_id(self):
         return self._id
@@ -74,7 +75,7 @@ class Robot(BaseObject):
         return self._has_water
 
     def set_energy(self, value):
-        self._energy = value
+        self._energy = min(value, self._maximum_energy)
 
     def get_energy(self):
         return self._energy

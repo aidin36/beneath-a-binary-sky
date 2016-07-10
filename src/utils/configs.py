@@ -68,3 +68,7 @@ class Configs(Singleton):
     def get_plant_energy(self):
         return self._config_parser.getint("plant", "energy",
                                           fallback=150)
+
+    def get_robots_maximum_energy(self):
+        return self._config_parser.getint("robot", "maximum_energy",
+                                          fallback=400)
