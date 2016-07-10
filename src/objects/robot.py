@@ -41,9 +41,11 @@ class Robot(BaseObject):
         self._y = 0
         self._has_water = False
         self._energy = configs.get_robots_initial_energy()
-        self._life = configs.get_robots_initial_life()
-        self._last_executed_action_time = 0
         self._maximum_energy = configs.get_robots_maximum_energy()
+        self._life = configs.get_robots_initial_life()
+        self._honor = 0
+        self._last_executed_action_time = 0
+
 
     def get_id(self):
         return self._id
@@ -85,6 +87,12 @@ class Robot(BaseObject):
 
     def get_life(self):
         return self._life
+
+    def set_honor(self, value):
+        self._honor = value
+
+    def get_honor(self):
+        return self._honor
 
     def get_last_executed_action_time(self):
         return self._last_executed_action_time

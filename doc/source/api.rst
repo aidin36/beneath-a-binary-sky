@@ -215,5 +215,6 @@ CannotPlantHereError                       Raises if a robot tries to plant on a
 LongRobotNameError                         Raises if name of a robot is too long.
 NoWaterError                               Raises if a robot tries to pick up water from a dry square.
 RobotHaveNoWaterError                      Raises if the robot does not carry any water, but tries to water a square.
+NotEnoughHonorError                        Raises if a robot doesn't have enough honor to give birth to a child.
 =========================================  =====================================
 

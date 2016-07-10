@@ -31,7 +31,8 @@ class InfoAction(Action):
                         'plant_max_age': configs.get_plant_max_age(),
                         'plant_matured_age': configs.get_plant_matured_age(),
                         'action_delay': configs.get_robots_actions_delay(),
-                        'maximum_energy': configs.get_robots_maximum_energy()}
+                        'maximum_energy': configs.get_robots_maximum_energy(),
+                        'birth_required_honor': configs.get_robots_birth_required_honor()}
 
     def do_action(self, robot, args):
         '''Returns information about the world..

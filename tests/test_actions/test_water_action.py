@@ -52,6 +52,9 @@ class TestWaterAction(unittest.TestCase):
         updated_square = world.get_square((5, 0))
         plant = updated_square.get_plant()
 
+        # Checking if honor increased.
+        self.assertEqual(robot.get_honor(), 1)
+
         self.assertEqual(plant.get_water_level(), 100)
         self.assertFalse(robot.get_has_water())
 
@@ -85,6 +88,8 @@ class TestWaterAction(unittest.TestCase):
         action.do_action(robot, ["098kk.ski87.99"])
 
         self.assertFalse(robot.get_has_water())
+        # Honor shouldn't increase because this robot didn't really watered a plant.
+        self.assertEqual(robot.get_honor(), 0)
 
         database.rollback()
 

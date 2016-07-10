@@ -52,5 +52,6 @@ class WaterAction(Action):
         plant = square.get_plant()
         if plant is not None:
             plant.set_water_level(100)
+            robot.set_honor(robot.get_honor() + 1)
 
         robot.set_has_water(False)

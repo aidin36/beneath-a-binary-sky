@@ -18,11 +18,14 @@
 import random
 
 from actions.exceptions import InvalidArgumentsError
+from database.exceptions import DuplicatedPasswordError
+from population.exceptions import NotEnoughHonorError
 from security.authenticator import Authenticator
 from database.memcached_database import MemcachedDatabase
 from world.world import World
 from objects.robot import Robot
 from utils.id_generator import IDGenerator
+from utils.configs import Configs
 
 
 class PopulationControl:
@@ -34,14 +37,18 @@ class PopulationControl:
         self._authenticator = Authenticator()
         self._database = MemcachedDatabase()
         self._world = World()
-        self._robot_id_generator = IDGenerator()
+        self._id_generator = IDGenerator()
+        self._configs = Configs()
 
     def execute_command(self, password, command, args):
         '''Executes the specified command.'''
+        if not isinstance(password, str):
+            raise InvalidArgumentsError("Expected {0} as password, found {1}.".format(type(str), type(password)))
+
         if command == "born":
             return self._born(password, args)
         elif command == "give_birth":
-            self._give_birth(password, args)
+            return self._give_birth(password, args)
 
     def _born(self, password, args):
         '''Gives birth to a robot for the first time.
@@ -72,8 +79,8 @@ class PopulationControl:
 
         self._authenticator.authenticate_new_robot(password)
 
-        new_robot = Robot(self._robot_id_generator.get_robot_id(),
-                          self._robot_id_generator.get_password(),
+        new_robot = Robot(self._id_generator.get_robot_id(),
+                          self._id_generator.get_password(),
                           name=robot_name)
 
         self._world.add_robot(new_robot, (born_location[0], born_location[1]))
@@ -82,4 +89,32 @@ class PopulationControl:
                 'password': new_robot.get_password()}
 
     def _give_birth(self, password, args):
-        pass
+        '''Checks if robot has the permission to give birth to a child.
+        If so, it generates and returns a new password.
+        '''
+        if len(args) != 1:
+            raise InvalidArgumentsError("`give_birth' takes exactly one argument.")
+
+        robot_id = args[0]
+        if not isinstance(robot_id, str):
+            raise InvalidArgumentsError("Expected {0} as robot_id, found {1}".format(type(str), type(args[0])))
+
+        robot = self._database.get_robot(robot_id, for_update=True)
+
+        required_honor = self._configs.get_robots_birth_required_honor()
+        if robot.get_honor() < required_honor:
+            raise NotEnoughHonorError("Robot needs {0} honor to give birth, but has {1}.".format(
+                required_honor, robot.get_honor()))
+
+        robot.set_honor(robot.get_honor() - required_honor)
+
+        # This while is exists, to prevent generating duplicated passwords.
+        while True:
+            try:
+                new_password = self._id_generator.get_password()
+                self._database.add_password(new_password)
+                break
+            except DuplicatedPasswordError: # pragma: no cover
+                continue
+
+        return new_password

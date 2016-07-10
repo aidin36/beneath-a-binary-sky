@@ -39,6 +39,7 @@ class TestInfoAction(unittest.TestCase):
         self.assertEqual(info['plant_max_age'], configs.get_plant_max_age())
         self.assertEqual(info['plant_matured_age'], configs.get_plant_matured_age())
         self.assertEqual(info['action_delay'], configs.get_robots_actions_delay())
+        self.assertEqual(info['birth_required_honor'], configs.get_robots_birth_required_honor())
 
     def test_bad_arguments(self):
         '''Calls the action with invalid arguments.'''
