@@ -59,7 +59,7 @@ class World(Singleton):
                 # If this square was locked, go to the next one.
                 continue
 
-        raise exceptions.WorldIsFullError("No free location is remained in the world!")
+        raise exceptions.WorldIsFullError("No free location is remained in the world!") # pragma: no cover
 
     def move_robot(self, robot, destination):
         '''Moves a robot to the specified location.

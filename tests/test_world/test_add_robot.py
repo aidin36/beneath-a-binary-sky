@@ -68,5 +68,30 @@ class AddRobotTest(unittest.TestCase):
             self._world.add_robot(robot, (19872, 1190))
             database.commit()
 
-    # TODO: Add this test after completion of the world class.
-#    def test_blocked_location(self):
+    def test_blocked_location(self):
+        '''Tests adding the robot to a blocked square.'''
+        database = MemcachedDatabase()
+        robot = Robot("test_blocked_location_91882", "123")
+
+        # There's a rock here.
+        self._world.add_robot(robot, (6, 1))
+        database.commit()
+
+        received_robot = database.get_robot(robot.get_id())
+
+        self.assertNotEqual(received_robot.get_location(), (6, 1))
+
+    def test_locked_location(self):
+        '''Tests adding a robot to a locked location.'''
+        database = MemcachedDatabase()
+        robot = Robot("test_locked_location_0023", "123")
+
+        # Locking 8,1
+        database.get_square((8, 1), for_update=True)
+
+        self._world.add_robot(robot, (8, 1))
+        database.commit()
+
+        received_robot = database.get_robot(robot.get_id())
+
+        self.assertNotEqual(received_robot.get_location(), (8, 1))
