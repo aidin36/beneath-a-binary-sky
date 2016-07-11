@@ -52,6 +52,174 @@
   <div class="section" id="api-of-the-world-server">
 <h1>API of the World Server<a class="headerlink" href="#api-of-the-world-server" title="Permalink to this headline">¶</a></h1>
 <p>This document explains the API that a robot should use to interact with the server.</p>
+<div class="section" id="surface-types">
+<h2>Surface Types<a class="headerlink" href="#surface-types" title="Permalink to this headline">¶</a></h2>
+<p>Each square on the map, is of a type. Each of these types have their own properties.</p>
+<p>The following enumeration defines these types:</p>
+<p>0: Soil, 1: Sand, 2: Rock, 3: Water</p>
+<p>Plants can only be plant on Soil.</p>
+<p>Plant cannot be plant on Sand.</p>
+<p>Rock will block the way. Robots cannot pass rocks.</p>
+<p>Water is where robots can pick waters. Robots can walk on water.</p>
+</div>
+<div class="section" id="commands-related-to-birth">
+<h2>Commands Related to Birth<a class="headerlink" href="#commands-related-to-birth" title="Permalink to this headline">¶</a></h2>
+<p><strong>born</strong></p>
+<p>This is the first command a robot should send to the server. By executing this command, robot will
+be added to the world. You can think of it as login.</p>
+<p><em>arguments</em>: The password argument of this command, is one of the pre-definied passwords on
+the server. This is a one-time password.</p>
+<p>An optional Parent ID can also be send to the server. If Parent ID passed, the new robot will be
+born somewhere close to its parent.</p>
+<p><em>result</em>: A dictionary, containing ID and password of the new robot. This password is the one
+that should be send along with every command.</p>
+<p>Example of command:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;oi98Ey12Ncy7Er90&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;born&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+</pre></div>
+</div>
+<p>Example of command with a Parent ID:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;Mn81Ey19Ncy7Z2xD&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;born&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;8112.10.910&quot;</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>Example of Result:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+ <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;robot_id&quot;</span><span class="p">:</span> <span class="s2">&quot;8932.23.908&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;uyhDQpe91U3D3q91&quot;</span><span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>give_birth</strong></p>
+<p>When robot gain enough honor (by watering plants), it can give birth to a new robot. For doing so,
+it should send <em>give_birth</em> command to the server, and receive a one-time password. Then, child
+should send a <em>born</em> command with this password to the server.</p>
+<p><em>arguments</em>: Like actions, only the password and robot ID is required.</p>
+<p><em>result</em>: The one-time password.</p>
+<p>Example command:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;i87Nco1E32dEwq10&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;give_birth&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;1223.80.127&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Example result:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+ <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;nuEy129EcpI29QxP&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="commands-to-control-the-robot-actions">
+<h2>Commands to Control the Robot (Actions)<a class="headerlink" href="#commands-to-control-the-robot-actions" title="Permalink to this headline">¶</a></h2>
+<p>Here is a list of commands a robot can send to the server. These commands calls <em>Action</em>.</p>
+<p>The arguments listed in from of <em>arguments</em>, is the ones inside the <em>args</em> list in the command.
+The <em>password</em> and <em>robot_id</em> should always present, so omited from the document.</p>
+<p><strong>info</strong></p>
+<p>Gives general information about the world.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: A dictionary with the following keys:</p>
+<p>world_size: <em>string</em> A string in the form of &#8220;x,y&#8221;.</p>
+<p>plant_max_age: <em>integer</em> Maximum age a plant can reach. At this age, plant will die.</p>
+<p>plant_matured_age: <em>integer</em> Age that a plant become matured and eatable by robots.</p>
+<p>action_delay: <em>integer</em> Minimum delayed time before executing next action. For example, if it is 30, it means a robot
+can&#8217;t do the next action if less than 30 milliseconds has been passed.</p>
+<p>maximum_energy: <em>integer</em> The maximum energy a robot can have. Eating plants can increase the robot&#8217;s energy
+only to this maximum amount.</p>
+<p>birth_required_honor: <em>integer</em> The amount of honor required for giving birth to a new child.</p>
+<p>Example result:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+ <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;world_size&quot;</span><span class="p">:</span> <span class="s2">&quot;500,300&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;plant_max_age&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+            <span class="nt">&quot;plant_matured_age&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+            <span class="nt">&quot;action_delay&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+            <span class="nt">&quot;maximum_energy&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
+            <span class="nt">&quot;birth_required_honor&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>move</strong></p>
+<p>Moves the robot in the specified direction.</p>
+<p><em>arguments</em>: A string indicating the direction. Direction can be one of <em>N, NE, NW, E, W, S, SW, SE</em>.</p>
+<p><em>result</em>: None</p>
+<p>Example command:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;jnh8712ErPn18Ws0&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;move&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;1187.6.167&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;NE&quot;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>pick_water</strong></p>
+<p>Makes robot picking up water. Robot should be on a <em>water</em> square, or else an excepion will be raised.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: None</p>
+<p><strong>plant</strong></p>
+<p>Plants a plant on the location of the robot. If the square is not Soil, an exception will be raised.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: None</p>
+<p><strong>sense</strong></p>
+<p>Returns what sensors of the robot can sense. It will returns information about the eight squares around the robot,
+and the square robot is standing on.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: A dictionary which maps each location to its objects.</p>
+<p>Each element of the result dictionary, have these keys:</p>
+<p>surface_type: <em>integer</em> Type of that surface.</p>
+<p>robot: <em>boolean</em> If True, it means there&#8217;s a robot on that square. Note that <em>sense</em> command returns the current
+location of the robot, too. Since robot is standing there, the <em>robot</em> flag of that square is always True.</p>
+<p>plant: A dictionary contains infomration about a plant in that location. This can be <code class="docutils literal"><span class="pre">null</span></code>, showing no plant is
+there.</p>
+<p>The <em>plant</em> dictionary contains the following keys:</p>
+<p>water_level: <em>integer</em> Water level of that plant. It can be between zero and 100.</p>
+<p>matured: <em>boolean</em> If True, shows that plant is matured and can be eat by robots.</p>
+<p>age: <em>integer</em> Age of the plant. After a certain age, plants will die.</p>
+<p>Example result:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+ <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;2,3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;surface_type&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="nt">&quot;robot&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;plant&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;water_level&quot;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span>
+                              <span class="nt">&quot;matured&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                              <span class="nt">&quot;age&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
+                    <span class="p">},</span>
+            <span class="nt">&quot;2,4&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;surface_type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;robot&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;plant&quot;</span><span class="p">:</span> <span class="kc">null</span>
+                    <span class="p">}</span>
+            <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>status</strong></p>
+<p>Returns information about the current status of the robot.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: A dictionary containing the following fields:</p>
+<p>alive: <em>boolean</em> If True, it means robot is alive. False mean robot is dead.</p>
+<p>location: <em>string</em> A string in the form of &#8220;x,y&#8221;, showing where the robot is.</p>
+<p>have_water: <em>boolean</em> If True, it means robot is carring water.</p>
+<p>Example result:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+ <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;alive&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;26,3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;have_water&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>water</strong></p>
+<p>Makes the robot pour the water its carrying. It use to water plants. The water level of the plant will become 100
+after watering.</p>
+<p>Note that if there&#8217;s no plant on the current location, no exception would be raise. In other words, robot should
+be intelligent enough to not waste its water.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: None</p>
+<p><strong>eat</strong></p>
+<p>Orders the robot to eat the plant in the current location. If the plant is matured, the robot will receive energy.
+Else, plant will be removed from the world, but robot will gain nothing.</p>
+<p>Client receives an error if there&#8217;s no plant on the robot&#8217;s location.</p>
+<p><em>arguments</em>: None</p>
+<p><em>result</em>: None</p>
+</div>
 <div class="section" id="exceptions">
 <h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
 <p>If any errors occur, client will receive a dictionary like these:</p>
@@ -89,10 +257,9 @@
 <tr class="row-odd"><td>CannotAddObjectError</td>
 <td><p class="first">Raises when there is a problem for adding an object (i.e a robot) to the database.
 Common causes:</p>
-<blockquote class="last">
-<div>Object (Robot) ID is already exists.
-Memcached is not started.
-Memory is full.</div></blockquote>
+<p>Object (Robot) ID is already exists.</p>
+<p>Memcached is not started.</p>
+<p class="last">Memory is full.</p>
 </td>
 </tr>
 <tr class="row-even"><td>RobotNotFoundError</td>
@@ -134,6 +301,9 @@ Memory is full.</div></blockquote>
 <tr class="row-even"><td>RobotHaveNoWaterError</td>
 <td>Raises if the robot does not carry any water, but tries to water a square.</td>
 </tr>
+<tr class="row-odd"><td>NotEnoughHonorError</td>
+<td>Raises if a robot doesn&#8217;t have enough honor to give birth to a child.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -160,6 +330,9 @@ Memory is full.</div></blockquote>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API of the World Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#surface-types">Surface Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commands-related-to-birth">Commands Related to Birth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commands-to-control-the-robot-actions">Commands to Control the Robot (Actions)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
 </ul>
 </li>
