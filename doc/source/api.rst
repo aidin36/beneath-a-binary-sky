@@ -22,11 +22,76 @@ Rock will block the way. Robots cannot pass rocks.
 
 Water is where robots can pick waters. Robots can walk on water.
 
+Commands Related to Birth
+-------------------------
 
-Commands a Robot Can Send to Server (Actions)
----------------------------------------------
+**born**
+
+This is the first command a robot should send to the server. By executing this command, robot will
+be added to the world. You can think of it as login.
+
+*arguments*: The password argument of this command, is one of the pre-definied passwords on
+the server. This is a one-time password.
+
+An optional Parent ID can also be send to the server. If Parent ID passed, the new robot will be
+born somewhere close to its parent.
+
+*result*: A dictionary, containing ID and password of the new robot. This password is the one
+that should be send along with every command.
+
+Example of command::
+
+    {"password": "oi98Ey12Ncy7Er90",
+     "command": "born",
+     "args": []}
+
+Example of command with a Parent ID::
+
+    {"password": "Mn81Ey19Ncy7Z2xD",
+     "command": "born",
+     "args": ["8112.10.910"]}
+
+
+Example of Result::
+
+
+    {"status": 200,
+     "result": {"robot_id": "8932.23.908",
+                "password": "uyhDQpe91U3D3q91"}
+     }
+
+
+**give_birth**
+
+When robot gain enough honor (by watering plants), it can give birth to a new robot. For doing so,
+it should send *give_birth* command to the server, and receive a one-time password. Then, child
+should send a *born* command with this password to the server.
+
+*arguments*: Like actions, only the password and robot ID is required.
+
+*result*: The one-time password.
+
+Example command::
+
+    {"password": "i87Nco1E32dEwq10",
+     "command": "give_birth",
+     "args": ["1223.80.127"]
+    }
+
+Example result::
+
+    {"status": 200,
+     "result": {"nuEy129EcpI29QxP"}
+    }
+
+
+Commands to Control the Robot (Actions)
+---------------------------------------
 
 Here is a list of commands a robot can send to the server. These commands calls *Action*.
+
+The arguments listed in from of *arguments*, is the ones inside the *args* list in the command.
+The *password* and *robot_id* should always present, so omited from the document.
 
 **info**
 
