@@ -108,14 +108,22 @@ plant_max_age: *integer* Maximum age a plant can reach. At this age, plant will 
 plant_matured_age: *integer* Age that a plant become matured and eatable by robots.
 
 action_delay: *integer* Minimum delayed time before executing next action. For example, if it is 30, it means a robot
-can't do the next action if less than 30 seconds has been passed.
+can't do the next action if less than 30 milliseconds has been passed.
+
+maximum_energy: *integer* The maximum energy a robot can have. Eating plants can increase the robot's energy
+only to this maximum amount.
+
+birth_required_honor: *integer* The amount of honor required for giving birth to a new child.
 
 Example result::
 
     {"status": 200,
      "result": {"world_size": "500,300",
                 "plant_max_age": 60,
-                "plant_matured_age": 25}
+                "plant_matured_age": 25,
+                "action_delay": 30,
+                "maximum_energy": 400,
+                "birth_required_honor": 40}
      }
 
 **move**
