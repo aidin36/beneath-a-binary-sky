@@ -262,7 +262,7 @@ If any errors occur, client will receive a dictionary like these::
 =========================================  =====================================
 Error Code                                 Description
 =========================================  =====================================
-InvalidJSONError                           The JSON client sent is in a wrong format, or missed some mandatory fields.
+InvalidRequestError                        The client request is in a wrong format, of missed a mandatory field.
 InvalidHttpMethodError                     Server only accepts POST HTTP method. Client will receive this error if it tries to use other method.
 InvalidArgumentsError                      Raises if arguments of an action (command) are not correct.
 InvalidActionError                         Raises when specified command (action) does not exists or invalid.

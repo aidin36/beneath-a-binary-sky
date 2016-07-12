@@ -15,20 +15,9 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-import json
-import unittest
 
-from listeners import json_listener
+class InvalidHttpMethodError(Exception):
+    '''Raises if the HTTP Method is not acceptable.'''
 
-
-class TestMethod(unittest.TestCase):
-
-    def fake_start_response(self, *args, **kwargs):
-        pass
-
-    def test_invalid_method(self):
-        '''Sends invalid method to the listener.'''
-        env = {"REQUEST_METHOD": "GET"}
-
-        result = json_listener.application(env, self.fake_start_response)
-        self.assertEqual(result[0], "Only POST method allowed")
+class InvalidRequestError(Exception):
+    '''Raises if the received request is not valid.'''

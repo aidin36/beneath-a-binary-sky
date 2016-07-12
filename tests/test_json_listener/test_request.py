@@ -16,11 +16,11 @@
 # <http://www.gnu.org/licenses/>.
 
 
-import unittest
 import io
 import json
+import unittest
 
-import json_listener
+from listeners import json_listener
 
 
 class TestReqiest(unittest.TestCase):
@@ -49,7 +49,7 @@ class TestReqiest(unittest.TestCase):
         result = self.call_application_func(missed_password)
 
         self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
+        self.assertEqual(result["error_code"], "InvalidRequestError")
 
         missed_command = {"password": "123",
                           "args": []}
@@ -57,7 +57,7 @@ class TestReqiest(unittest.TestCase):
         result = self.call_application_func(missed_command)
 
         self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
+        self.assertEqual(result["error_code"], "InvalidRequestError")
 
         missed_args = {"password": "123",
                        "command": "status"}
@@ -65,14 +65,14 @@ class TestReqiest(unittest.TestCase):
         result = self.call_application_func(missed_args)
 
         self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
+        self.assertEqual(result["error_code"], "InvalidRequestError")
 
         missed_all = {}
 
         result = self.call_application_func(missed_all)
 
         self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
+        self.assertEqual(result["error_code"], "InvalidRequestError")
 
     def test_bad_args(self):
         '''Sends bad args.'''
@@ -83,7 +83,7 @@ class TestReqiest(unittest.TestCase):
         result = self.call_application_func(request)
 
         self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
+        self.assertEqual(result["error_code"], "InvalidRequestError")
 
         request = {"password": "123",
                    "command": "move",
@@ -92,7 +92,7 @@ class TestReqiest(unittest.TestCase):
         result = self.call_application_func(request)
 
         self.assertEqual(result["status"], 500)
-        self.assertEqual(result["error_code"], "InvalidJSONError")
+        self.assertEqual(result["error_code"], "InvalidRequestError")
 
     def test_good_request(self):
         '''An OK request.'''
@@ -112,14 +112,10 @@ class TestReqiest(unittest.TestCase):
                "wsgi.input": None}
 
         result = json_listener.application(env, self.fake_start_response)
-        result = json.loads(result[0].decode("utf-8"))
-
-        self.assertEqual(result["status"], 500)
+        self.assertEqual(result[0], "'NoneType' object has no attribute 'read'")
 
         env = {"REQUEST_METHOD": "POST",
                "wsgi.input": '{"action": "ui", "password": "123"}'}
 
         result = json_listener.application(env, self.fake_start_response)
-        result = json.loads(result[0].decode("utf-8"))
-
-        self.assertEqual(result["status"], 500)
+        self.assertEqual(result[0], "'str' object has no attribute 'read'")
