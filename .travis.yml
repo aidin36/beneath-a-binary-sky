@@ -14,7 +14,6 @@ install:
   - pip install coveralls
 
 script:
-  mkdir /var/log/beneath-a-binary-sky/
   coverage run ./tests/start.py
 
 after_success:
