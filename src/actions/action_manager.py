@@ -17,7 +17,7 @@
 
 import time
 
-import utils.logger
+from utils.logger import Logger
 from utils.configs import Configs
 from utils.exceptions import BinarySkyException
 from database.memcached_database import MemcachedDatabase
@@ -87,7 +87,7 @@ class ActionManager:
 
         except LockAlreadyAquiredError as error:
             # Logging all concurrency errors, so we can investigate them later.
-            utils.logger.info("LockAlreadyAquiredError: {0}".format(error))
+            Logger().info("LockAlreadyAquiredError: {0}".format(error))
             raise
         except AuthenticationFailedError:
             raise

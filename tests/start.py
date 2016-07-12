@@ -43,6 +43,10 @@ def initialize_world(current_directory):
     world = World()
     world.load_from_file(os.path.join(current_directory, "..", "sample_configs", "tests.world"))
 
+def initialize_logger(current_directory):
+    from utils.logger import Logger
+
+    Logger().load_configs(os.path.join(current_directory, "..", "sample_configs", "logging.config"))
 
 def main():
     # Adding main source directory to the modules path.
@@ -57,6 +61,8 @@ def main():
     try:
         # Sleeping a little, to ensure Memcached is started.
         time.sleep(0.5)
+
+        initialize_logger(current_module_directory)
 
         initialize_database()
 

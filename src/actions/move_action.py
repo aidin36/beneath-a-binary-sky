@@ -17,7 +17,7 @@
 
 import time
 
-import utils.logger
+from utils.logger import Logger
 from actions.action import Action
 from actions.exceptions import InvalidArgumentsError
 from database.exceptions import LockAlreadyAquiredError
@@ -34,6 +34,10 @@ class MoveAction(Action):
                   "SW": (-1, 1),
                   "W": (-1, 0),
                   "NW": (-1, -1)}
+
+    def __init__(self):
+        self._world = World()
+        self._logger = Logger()
 
     def do_action(self, robot, args):
         '''Move the robot in the specified direction..
@@ -58,11 +62,10 @@ class MoveAction(Action):
         except LockAlreadyAquiredError:
             # Waiting for a moment, and trying one more time.
             # Client shouldn't receive an error if, for example, someone updating a plant on these squares.
-            utils.logger.info("Concurrency when trying to move a robot.")
+            self._logger.info("Concurrency when trying to move a robot.")
             time.sleep(0.02)
             self._do_move(robot, destination)
 
     def _do_move(self, robot, destination):
         '''Actually moves the robot to the new location.'''
-        world = World()
-        world.move_robot(robot, destination)
+        self._world.move_robot(robot, destination)

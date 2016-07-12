@@ -15,12 +15,26 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-def error(log_message):
-    '''
-    '''
-    print("Error:", log_message)
+import logging
+import logging.config
 
-def info(log_message):
-    '''
-    '''
-    print("Info:", log_message)
+from utils.singleton import Singleton
+
+
+class Logger(Singleton):
+
+    def _initialize(self):
+        pass
+
+    def load_configs(self, config_file_path):
+        '''Loads the configurations from the specified path.'''
+        logging.config.fileConfig(config_file_path)
+        self._logger = logging.getLogger()
+
+    def error(self, log_message):
+        '''Logs in ERROR level.'''
+        self._logger.error(log_message)
+
+    def info(self, log_message):
+        '''Logs in INFO level.'''
+        self._logger.info(log_message)

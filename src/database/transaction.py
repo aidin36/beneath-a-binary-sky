@@ -17,7 +17,7 @@
 
 import traceback
 
-import utils.logger
+from utils.logger import Logger
 from database.lock import Lock
 from database.memcached_connection import MemcachedConnection
 from database.exceptions import CannotAddObjectError, DatabaseFatalError
@@ -30,7 +30,7 @@ class Transaction:
         self._stored_objects = []
         self._new_objects = []
         self._locks = []
-
+        self._logger = Logger()
 
     def add_object(self, new_object):
         '''Adds this object to the database on commit.'''
@@ -79,7 +79,7 @@ class Transaction:
             try:
                 errors = connection.add_multi(add_list)
             except Exception as error:
-                utils.logger.error("On committing: Error when calling `add_multi': {0}'n{1}".format(
+                self._logger.error("On committing: Error when calling `add_multi': {0}'n{1}".format(
                     error, traceback.format_exc()))
                 raise
 
@@ -106,7 +106,7 @@ class Transaction:
             try:
                 set_errors = connection.set_multi(update_list)
             except Exception as error:
-                utils.logger.error("On committing: Error when calling `set_multi': {0}\n{1}".format(
+                self._logger.error("On committing: Error when calling `set_multi': {0}\n{1}".format(
                     error, traceback.format_exc()))
                 other_error = error
 

@@ -19,7 +19,7 @@ import traceback
 import json
 
 from communicator import Communicator
-import utils.logger
+from utils.logger import Logger
 
 
 class InvalidJSONError(Exception):
@@ -40,7 +40,7 @@ def send_error(start_response, error):
 
 def validate_request(request):
     '''Validates if the request have the required fields.
-    
+
     @raise InvalidJSONError: If the request is not valid.
     '''
     if 'command' not in request:
@@ -75,11 +75,11 @@ def application(env, start_response):
                                                             request["command"],
                                                             request["args"])
     except Exception as error:
-        utils.logger.error("JSON Listener: {0}\n{1}".format(error, traceback.format_exc()))
+        Logger().error("JSON Listener: {0}\n{1}".format(error, traceback.format_exc()))
         return send_error(start_response, error)
 
     result = {'status': 200,
               'result': communicator_result}
-    
+
     start_response('200 OK', [('Content-Type','text/html')])
     return [json.dumps(result).encode('utf-8')]
