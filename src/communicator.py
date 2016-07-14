@@ -25,6 +25,7 @@ class Communicator(Singleton):
     '''Interface between listeners and the application.'''
 
     def _initialize(self):
+        self._database = MemcachedDatabase()
         self._action_manager = ActionManager()
         self._population_control = PopulationControl()
 
@@ -32,17 +33,15 @@ class Communicator(Singleton):
         '''Execute client's command.'''
 
         try:
-            if command in ["ui", "stats"]:
-                # Admin commands.
-                pass
-            elif command in ["born", "give_birth"]:
-                return self._population_control.execute_command(password, command, args)
+            if command in ["born", "give_birth"]:
+                result = self._population_control.execute_command(password, command, args)
             else:
-                return self._action_manager.do_action(password, command, args)
+                result = self._action_manager.do_action(password, command, args)
 
-        # Committing or rollbacking all changes after the completion of execution.
+            # Committing or rollbacking all changes after the completion of execution.
+            self._database.commit()
+            return result
+
         except Exception:
-            MemcachedDatabase().rollback()
+            self._database.rollback()
             raise
-        else:
-            MemcachedDatabase().commit()
