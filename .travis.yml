@@ -10,6 +10,7 @@ services:
 
 install:
   - pip install pylibmc
+  - pip install msgpack-python
   - pip install coverage
   - pip install coveralls
 
