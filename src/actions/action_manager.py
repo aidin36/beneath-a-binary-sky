@@ -31,6 +31,7 @@ from actions.plant_action import PlantAction
 from actions.pick_water import PickWaterAction
 from actions.info_action import InfoAction
 from actions.eat_action import EatAction
+from actions.water_action import WaterAction
 
 
 class ActionManager:
@@ -48,8 +49,8 @@ class ActionManager:
                          'plant': PlantAction(),
                          'pick_water': PickWaterAction(),
                          'info': InfoAction(),
-                         'eat': EatAction()}
-
+                         'eat': EatAction(),
+                         'water': WaterAction()}
 
     def do_action(self, password, action_type, args):
         '''Will do the requested action.'''
