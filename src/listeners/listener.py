@@ -26,7 +26,7 @@ from utils.logger import Logger
 from utils.configs import Configs
 
 
-def initialize_process():
+def initialize_process(): # pragma: no cover - This will be mocked in the tests an never runs.
     '''Initializes the newly forked process'''
     config_file_path = os.environ.get("BINARY_SKY_CONFIG_FILE")
     logging_config_path = os.environ.get("BINARY_SKY_LOGGING_FILE")
