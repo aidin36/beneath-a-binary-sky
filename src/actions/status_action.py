@@ -27,4 +27,7 @@ class StatusAction(Action):
 
         return {'alive': robot.get_alive(),
                 'location': "{0},{1}".format(*robot.get_location()),
-                'have_water': robot.get_has_water()}
+                'has_water': robot.get_has_water(),
+                'energy': robot.get_energy(),
+                'life': robot.get_life(),
+                'honor': robot.get_honor()}

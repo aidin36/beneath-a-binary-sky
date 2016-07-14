@@ -214,14 +214,23 @@ alive: *boolean* If True, it means robot is alive. False mean robot is dead.
 
 location: *string* A string in the form of "x,y", showing where the robot is.
 
-have_water: *boolean* If True, it means robot is carring water.
+has_water: *boolean* If True, it means robot is carrying water.
+
+energy: *integer* Current energy of the robot. e.g. how many actions it can do before running out of battery.
+
+life: *integer* Current life of the robot. e.g. how many actions it can do before die.
+
+honor: *integer* Current honor of the robot.
 
 Example result::
 
     {"status": 200,
      "result": {"alive": true,
                 "location": "26,3",
-                "have_water": false}
+                "has_water": false,
+                "energy": 70,
+                "life": 532,
+                "honor": 7}
     }
 
 
