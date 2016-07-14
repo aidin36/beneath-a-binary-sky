@@ -56,7 +56,7 @@ def main():
     configs = load_configs(current_module_directory)
 
     # Running new instance of memcached.
-    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", configs.get_database_port()])
+    memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", configs.get_server_database_port()])
 
     try:
         # Sleeping a little, to ensure Memcached is started.

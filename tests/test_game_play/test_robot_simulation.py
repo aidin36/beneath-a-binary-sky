@@ -15,9 +15,16 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
+import sys
 import unittest
+import unittest.mock
 import io
 import msgpack
+
+# Mocking uwsgi module, since we're not running listener module as a UWSGI application.
+uwsgidecorators_mock = unittest.mock.MagicMock()
+uwsgidecorators_mock.postfork.return_value = None
+sys.modules['uwsgidecorators'] = uwsgidecorators_mock
 
 from utils.configs import Configs
 from database.memcached_database import MemcachedDatabase

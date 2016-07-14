@@ -16,7 +16,14 @@
 # <http://www.gnu.org/licenses/>.
 
 import json
+import sys
 import unittest
+import unittest.mock
+
+# Mocking uwsgi module, since we're not running listener module as a UWSGI application.
+uwsgidecorators_mock = unittest.mock.MagicMock()
+uwsgidecorators_mock.postfork.return_value = None
+sys.modules['uwsgidecorators'] = uwsgidecorators_mock
 
 from listeners import json_listener
 

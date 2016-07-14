@@ -62,7 +62,7 @@ class NewWorld:
         # Setting back everything to their original values.
         World._single_instance = self._original_world_instance
         MemcachedDatabase._single_instance = self._original_database_instance
-        MemcachedConnection().config_connection(Configs().get_database_port())
+        MemcachedConnection().config_connection(Configs().get_server_database_port())
         self._memcached_process.terminate()
 
 
