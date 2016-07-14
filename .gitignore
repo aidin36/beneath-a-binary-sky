@@ -17,3 +17,6 @@ __pycache__
 
 # Output of documents
 doc/build
+
+# Log file of tests.
+beneath-a-binary-sky.log
