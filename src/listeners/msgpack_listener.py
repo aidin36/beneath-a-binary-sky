@@ -31,7 +31,7 @@ def application(env, start_response):
 
         msgpack_request = env["wsgi.input"].read()
 
-        request = msgpack.unpackb(msgpack_request)
+        request = msgpack.unpackb(msgpack_request, encoding='utf-8')
 
         result = listener.handle_request(request)
 
