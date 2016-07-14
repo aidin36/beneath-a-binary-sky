@@ -1,0 +1,7 @@
+To setup NGINX using these sample configs, simply copy `binary-sky.config' into
+`/etc/nginx/sites-enabled/'.
+Also, copy certificates (.crt and .key files) into `/etc/nginx/ssl-certs/`.
+
+WARNING: These certificates are self-signed. These should only use for testing
+the server locally. For deplying server somewhere public, use real certificates!
+Take this warning seriously!
