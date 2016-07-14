@@ -41,7 +41,7 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         database.commit()
 
         # Sleeping one cycle.
-        time.sleep(0.021)
+        time.sleep(0.031)
 
         square = world.get_square((3, 8), for_update=False)
 
@@ -60,7 +60,7 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         database.commit()
 
         # Waiting for 11 cycles.
-        time.sleep(11 * 0.02)
+        time.sleep(11 * 0.03)
 
         square = world.get_square((4, 8), for_update=False)
 
@@ -81,7 +81,7 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         database.commit()
 
         # Sleeping one cycle.
-        time.sleep(0.021)
+        time.sleep(0.031)
 
         square = world.get_square((11, 8), for_update=False)
         self.assertIsNone(square.get_plant())
@@ -120,7 +120,7 @@ class TestObjectUpdaterSquare(unittest.TestCase):
         world.get_square((7, 8), for_update=True)
 
         # Sleeping one cycle.
-        time.sleep(0.021)
+        time.sleep(0.031)
 
         with self.assertRaises(LockAlreadyAquiredError):
             world.get_square((7, 8), for_update=False)
