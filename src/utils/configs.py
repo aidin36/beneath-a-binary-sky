@@ -33,9 +33,13 @@ class Configs(Singleton):
         if len(result) <= 0: # pragma: no coverage
             raise FatalError("Config file {0} not found or is empty.".format(config_file_path))
 
-    def get_database_port(self):
-        return self._config_parser.get("database", "port",
+    def get_server_database_port(self):
+        return self._config_parser.get("server", "database_port",
                                        fallback="11542")
+
+    def get_server_workers(self):
+        return self._config_parser.get("server", "workers",
+                                       fallback=8)
 
     def get_robots_initial_energy(self):
         return self._config_parser.getint("robot", "initial_energy",

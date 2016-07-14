@@ -17,10 +17,19 @@
 
 import traceback
 import json
+import uwsgidecorators
 
 import listeners.listener as listener
 from listeners.exceptions import InvalidHttpMethodError
 from utils.logger import Logger
+
+
+@uwsgidecorators.postfork
+def initialize_process():
+    '''Initializes the newly forked process.
+    This method will be called right after UWSGI forks the worker process.
+    '''
+    listener.initialize_process()
 
 
 def application(env, start_response):

@@ -14,8 +14,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
+
+import traceback
+import os
+
 from communicator import Communicator
 from listeners.exceptions import InvalidRequestError
+from database.memcached_database import MemcachedDatabase
+from utils.exceptions import BinarySkyException
+from utils.logger import Logger
+from utils.configs import Configs
+
+
+def initialize_process():
+    '''Initializes the newly forked process'''
+    config_file_path = os.environ.get("BINARY_SKY_CONFIG_FILE")
+    logging_config_path = os.environ.get("BINARY_SKY_LOGGING_FILE")
+
+    Configs().load_configs(config_file_path)
+    Logger().load_configs(logging_config_path)
+    MemcachedDatabase().initialize()
 
 
 def make_error_response(error):
@@ -52,7 +70,11 @@ def handle_request(request):
         communicator_result = communicator.execute_command(request["password"],
                                                            request["command"],
                                                            request["args"])
+    except BinarySkyException as error:
+        return make_error_response(error)
     except Exception as error:
+        # Logging exceptions that are not one of ours.
+        Logger().error("System error: {0}\n{1}".format(error, traceback.format_exc()))
         return make_error_response(error)
 
     result = {'status': 200,

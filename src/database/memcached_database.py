@@ -37,7 +37,7 @@ class MemcachedDatabase(Singleton):
         self._hooks = []
 
         mc = MemcachedConnection()
-        mc.config_connection(Configs().get_database_port())
+        mc.config_connection(Configs().get_server_database_port())
 
         mc_connection = mc.get_connection()
         mc_connection.add("all_robots", [])
