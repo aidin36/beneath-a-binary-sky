@@ -60,9 +60,12 @@ def initialize_logger(config_file):
     Logger().load_configs(config_file)
 
 
-def initialize_database():
+def initialize_database(initial_passwords):
     database = MemcachedDatabase()
     database.initialize()
+
+    for password in initial_passwords:
+        database.add_password(password)
 
 
 def initialize_world(world_file):
@@ -100,11 +103,14 @@ def main():
     # Starting Memcached database.
     memcached_process = subprocess.Popen(["memcached", "-l", "127.0.0.1", "-p", configs.get_server_database_port()])
 
+    # Waiting a little to ensure that Memcached is started.
+    time.sleep(0.5)
+
     try:
         # Sleeping a little, to ensure Memcached is started.
         initialize_logger(args.logging_config_file)
 
-        initialize_database()
+        initialize_database(configs.get_server_initial_passwords())
 
         initialize_world(args.world_file)
 

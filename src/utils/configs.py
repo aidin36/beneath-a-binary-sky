@@ -41,6 +41,11 @@ class Configs(Singleton):
         return self._config_parser.get("server", "workers",
                                        fallback=8)
 
+    def get_server_initial_passwords(self):
+        passwords_list = self._config_parser.get("server", "initial_passwords",
+                                                 fallback="[]")
+        return eval(passwords_list)
+
     def get_robots_initial_energy(self):
         return self._config_parser.getint("robot", "initial_energy",
                                           fallback=75)
