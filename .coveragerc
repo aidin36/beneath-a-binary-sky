@@ -6,3 +6,7 @@ exclude_lines =
     pragma: no cover
     raise NotImplementedError
     class DatabaseHook
+
+omit =
+    src/utils/configs.py
+
