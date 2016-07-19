@@ -25,6 +25,7 @@ import database.exceptions as exceptions
 
 
 PASSWORD_PREFIX = "P_"
+WORLD_SIZE_KEY = "world_size"
 
 
 class MemcachedDatabase(Singleton):
@@ -76,6 +77,19 @@ class MemcachedDatabase(Singleton):
             transaction.rollback()
         finally:
             self._reset_transaction()
+
+    def set_world_size(self, size):
+        '''Stores the world's size on database.'''
+        mc_connection = MemcachedConnection().get_connection()
+
+        result = mc_connection.set(WORLD_SIZE_KEY, size)
+        if not result:
+            raise exceptions.DatabaseException("Couldn't store the world size on database.")
+
+    def get_world_size(self):
+        '''Returns the world size.'''
+        mc_connection = MemcachedConnection().get_connection()
+        return mc_connection.get(WORLD_SIZE_KEY)
 
     def add_square_row(self, row):
         '''Adds a row of squares to the map.

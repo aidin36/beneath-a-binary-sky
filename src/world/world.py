@@ -35,6 +35,13 @@ class World(Singleton):
 
     def get_size(self):
         '''Returns size of the world.'''
+        if self._size == (-1, -1):
+            # Reading the size from database, and caching it.
+            # Although `load_from_file' method sets this variable,
+            # after forking this variable will be reset. So we need
+            # to load the size from database again.
+            self._size = self._database.get_world_size()
+
         return self._size
 
     def add_robot(self, robot, location):
@@ -141,3 +148,4 @@ class World(Singleton):
             self._database.add_square_row(row)
 
         self._size = (row_length, line_number)
+        self._database.set_world_size(self._size)
