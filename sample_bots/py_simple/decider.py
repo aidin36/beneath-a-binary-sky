@@ -20,6 +20,9 @@ from communicator import Communicator
 from handlers.give_birth_handler import GiveBirthHandler
 from handlers.water_finding_handler import WaterFindingHandler
 from handlers.water_picking_handler import WaterPickingHandler
+from handlers.planting_handler import PlantingHandler
+from handlers.watering_handler import WateringHandler
+from handlers.eating_handler import EatingHandler
 
 
 class Decider:
@@ -66,6 +69,11 @@ class Decider:
             status = response['result']
             print("My current status is:", status)
 
+            if (status['location'] == self._memory.get_first_plant_location() or
+                status['location'] == self._memory.get_second_plant_location()):
+                # Trying to eat this plant.
+                EatingHandler().handle(self._memory, status['location'])
+
             if status['honor'] >= self._memory.get_birth_required_honor():
                 print("Enough honor, let's giving birth to a child!")
                 GiveBirthHandler().handle(self._memory)
@@ -77,3 +85,11 @@ class Decider:
             elif not status['has_water']:
                 print("No water on hand. Going to pick some.")
                 WaterPickingHandler().handle(self._memory, status['location'])
+
+            elif status['has_water'] and self._memory.get_first_plant_location() is None:
+                print("I still didn't plant anything. Going to plant some corps.")
+                PlantingHandler().handle(self._memory, status['location'])
+
+            elif status['has_water'] and self._memory.get_first_plant_location() is not None:
+                print("Going to water my plants.")
+                WateringHandler().handle(self._memory, status['location'])

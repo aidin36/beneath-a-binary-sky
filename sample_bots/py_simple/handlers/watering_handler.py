@@ -15,21 +15,31 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-import time
-
 import helpers.move
 from communicator import Communicator
 
 
-class WaterPickingHandler:
-    '''Goes to the last known water location, and picks some.'''
+class WateringHandler:
+    '''Goes to the location of plants, and waters them.'''
+
+    LAST_WATERED = "second"
 
     def handle(self, memory, current_location):
-        print("Moving to the latest known water location.")
+        if WateringHandler.LAST_WATERED == "first":
+            plant_to_water = memory.get_second_plant_location()
+            if plant_to_water is None:
+                # There maybe no second plant.
+                plant_to_water = memory.get_first_plant_location()
+            WateringHandler.LAST_WATERED = "second"
+        else:
+            plant_to_water = memory.get_first_plant_location()
 
-        helpers.move.move(current_location, memory.get_nearest_water())
+        print("Going to water", WateringHandler.LAST_WATERED, "plant.")
 
-        print("I'm reached the water location. Picking some water.")
-        response = Communicator.send_action("pick_water", [])
+        helpers.move.move(current_location, plant_to_water)
+
+        print("I reached the plant. Watering...")
+
+        response = Communicator.send_action("water", [])
         if response['status'] == 500:
             print("Unexpected error:", response['error_code'], ":", response['error_message'])

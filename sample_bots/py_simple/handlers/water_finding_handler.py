@@ -44,7 +44,7 @@ class WaterFindingHandler:
             memory.update_squares(result)
 
             if memory.get_nearest_water() is not None:
-                print("I found water!")
+                print("I found water on", memory.get_nearest_water())
                 return
 
             print("No water yet, moving on ", self._current_direction, "direction.")

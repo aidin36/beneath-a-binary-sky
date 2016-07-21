@@ -15,7 +15,7 @@
 # along with Beneath a Binary Sky. If not, see
 # <http://www.gnu.org/licenses/>.
 
-from square_types import SquareTypes
+from helpers.square_types import SquareTypes
 
 
 class Memory:
@@ -25,6 +25,9 @@ class Memory:
         self._last_saw_soil = None
         self._last_saw_water = None
         self._world_info = {}
+        self._first_plant_location = None
+        self._second_plant_location = None
+        self._third_plant_location = None
 
     def update_squares(self, squares):
         '''Updates the specified squares in the memory.
@@ -33,6 +36,7 @@ class Memory:
             the description of that square. This is what receives
             from the world server.
         '''
+        print("Memorizing these locations:", squares)
         self._map.update(squares)
 
         for location, square in squares.items():
@@ -44,6 +48,9 @@ class Memory:
                 self._last_saw_soil = location
             if square['surface_type'] == SquareTypes.WATER:
                 self._last_saw_water = location
+
+    def get_square(self, location):
+        return self._map.get(location)
 
     def get_nearest_soil(self):
         '''Returns the nearest soil to the robot.'''
@@ -58,3 +65,15 @@ class Memory:
 
     def get_birth_required_honor(self):
         return self._world_info['birth_required_honor']
+
+    def store_first_plant_location(self, location):
+        self._first_plant_location = location
+
+    def get_first_plant_location(self):
+        return self._first_plant_location
+
+    def store_second_plant_location(self, location):
+        self._second_plant_location = location
+
+    def get_second_plant_location(self):
+        return self._second_plant_location
