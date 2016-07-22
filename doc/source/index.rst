@@ -1,4 +1,4 @@
-.. highlight:: py
+.. highlight:: bash
   :linenothreshold: 5
 
 Beneath a Binary Sky
@@ -7,8 +7,10 @@ Beneath a Binary Sky
 .. toctree::
   :hidden:
 
-  api
+  install
   tutorial
+  api
+
 
 What is it?
 -----------
@@ -58,4 +60,16 @@ Key Rules of the World
 * Robots need to gain an amout of honour, in order to gain allowance of giving birth. Honour will be given to the robots who contribute to the society, by making plants reach their maturity.
 
 * All of the amounts mentioned above (initial energy, maximum age of robots, required honour to give birth, etc) are configurable.
+
+
+Download and Install
+--------------------
+
+Stable releases can be found on `Github releases page <https://github.com/aidin36/beneath-a-binary-sky/releases>`_.
+
+You can also get the latest source code, either by `downloading a zip file from Github <https://github.com/aidin36/beneath-a-binary-sky/archive/master.zip>`_, or cloning it using *git client*::
+
+    git clone https://github.com/aidin36/beneath-a-binary-sky.git
+
+For instructions about how to install and run it, see :doc:`install`.
 
