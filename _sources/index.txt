@@ -1,4 +1,4 @@
-.. highlight:: py
+.. highlight:: bash
   :linenothreshold: 5
 
 Beneath a Binary Sky
@@ -7,10 +7,13 @@ Beneath a Binary Sky
 .. toctree::
   :hidden:
 
+  install
+  tutorial
   api
 
+
 What is it?
---------------
+-----------
 
 Beneath a Binary Sky is a programming game. It means, players are not humans, but programs. Gamer writes a program (a robot) and set it to live on a simulated world. The goal of each robot is to live longer, and produce more childern.
 
@@ -32,7 +35,7 @@ Outstanding Features
 .. TODO: An image showing the relation between robots and the simulator server.
 
 Free Software
----------------
+-------------
 
 .. image:: _static/gplv3.png
   :alt: Gnu General Public License, version 3
@@ -57,4 +60,16 @@ Key Rules of the World
 * Robots need to gain an amout of honour, in order to gain allowance of giving birth. Honour will be given to the robots who contribute to the society, by making plants reach their maturity.
 
 * All of the amounts mentioned above (initial energy, maximum age of robots, required honour to give birth, etc) are configurable.
+
+
+Download and Install
+--------------------
+
+Stable releases can be found on `Github releases page <https://github.com/aidin36/beneath-a-binary-sky/releases>`_.
+
+You can also get the latest source code, either by `downloading a zip file from Github <https://github.com/aidin36/beneath-a-binary-sky/archive/master.zip>`_, or cloning it using *git client*::
+
+    git clone https://github.com/aidin36/beneath-a-binary-sky.git
+
+For instructions about how to install and run it, see :doc:`install`.
 

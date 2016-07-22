@@ -24,7 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Beneath a Binary Sky" href="index.html" />
-    <link rel="prev" title="Beneath a Binary Sky" href="index.html" />
+    <link rel="up" title="How to install and run" href="install.html" />
+    <link rel="next" title="Writing a Simple Robot" href="tutorial.html" />
+    <link rel="prev" title="How to install and run" href="install.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -38,9 +40,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="index.html" title="Beneath a Binary Sky"
+          <a href="tutorial.html" title="Writing a Simple Robot"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="How to install and run"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Beneath a Binary Sky</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Beneath a Binary Sky</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="install.html" accesskey="U">How to install and run</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,6 +58,45 @@
   <div class="section" id="api-of-the-world-server">
 <h1>API of the World Server<a class="headerlink" href="#api-of-the-world-server" title="Permalink to this headline">¶</a></h1>
 <p>This document explains the API that a robot should use to interact with the server.</p>
+<div class="section" id="protocol">
+<h2>Protocol<a class="headerlink" href="#protocol" title="Permalink to this headline">¶</a></h2>
+<p>Clients (robots) interacts with server using HTTPS protocol. They sends their commands
+using POST method. Each command consist of a dictionary, which contains a <em>command key</em>,
+a <em>password</em> and <em>args</em>. This dictionary is serialized using JSON or MsgPack.</p>
+<p>By default, JSON listener can be reached on <code class="docutils literal"><span class="pre">/json</span></code> URL, and MsgPack is on <code class="docutils literal"><span class="pre">/msgpack</span></code>.</p>
+<p>So, in short, a client serializes a dictionary, and POST it to <code class="docutils literal"><span class="pre">/msgpack</span></code> URL of the
+server.</p>
+<p>In response, server sends a dictionary which is serialized using the same protocol client
+used.</p>
+<p>The response contains a <em>status</em>. This status is an integer number: 200 means the command
+executed without any problem, and 500 means there was an error. On success, response
+contains a <em>result</em>, which is the result of the command. If command hadn&#8217;t any result,
+the <em>result</em> will be <code class="docutils literal"><span class="pre">null</span></code>.</p>
+<p>As an example, a robot can get general information about the world using <em>info</em> command.
+Client sends this to the server:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;born&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;19IujfnCjd17Wo&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+</pre></div>
+</div>
+<p>No arguments passed, so <em>args</em> is an empty list. Note that <em>args</em> key should always be provided.
+If there&#8217;s no argument, like this example, an empty list should be send.</p>
+<p>If execution was successful, server response with:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+ <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;robot_id&quot;</span><span class="p">:</span> <span class="s2">&quot;3321.98.184&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;Nhc781wWsh210Dnc&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>But if any errors occur, server sends a response like this:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+ <span class="nt">&quot;error_code&quot;</span><span class="p">:</span> <span class="s2">&quot;AuthenticationFailedError&quot;</span><span class="p">,</span>
+ <span class="nt">&quot;error_message&quot;</span><span class="p">:</span> <span class="s2">&quot;Invalid password&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>For some examples about how to write a robot client, see <a class="reference internal" href="tutorial.html"><span class="doc">Writing a Simple Robot</span></a>. The rest of this
+document explains the commands and exceptions in details.</p>
+</div>
 <div class="section" id="surface-types">
 <h2>Surface Types<a class="headerlink" href="#surface-types" title="Permalink to this headline">¶</a></h2>
 <p>Each square on the map, is of a type. Each of these types have their own properties.</p>
@@ -197,12 +242,18 @@ there.</p>
 <p><em>result</em>: A dictionary containing the following fields:</p>
 <p>alive: <em>boolean</em> If True, it means robot is alive. False mean robot is dead.</p>
 <p>location: <em>string</em> A string in the form of &#8220;x,y&#8221;, showing where the robot is.</p>
-<p>have_water: <em>boolean</em> If True, it means robot is carring water.</p>
+<p>has_water: <em>boolean</em> If True, it means robot is carrying water.</p>
+<p>energy: <em>integer</em> Current energy of the robot. e.g. how many actions it can do before running out of battery.</p>
+<p>life: <em>integer</em> Current life of the robot. e.g. how many actions it can do before die.</p>
+<p>honor: <em>integer</em> Current honor of the robot.</p>
 <p>Example result:</p>
 <div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
  <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;alive&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;26,3&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;have_water&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">}</span>
+            <span class="nt">&quot;has_water&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;energy&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+            <span class="nt">&quot;life&quot;</span><span class="p">:</span> <span class="mi">532</span><span class="p">,</span>
+            <span class="nt">&quot;honor&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -228,6 +279,7 @@ Else, plant will be removed from the world, but robot will gain nothing.</p>
  <span class="nt">&quot;error_message&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrong password for Robot 6542.6.876&quot;</span><span class="p">}</span>
 </pre></div>
 </div>
+<p>Error codes and their meanings listed in the table below.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="21%" />
@@ -239,8 +291,8 @@ Else, plant will be removed from the world, but robot will gain nothing.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>InvalidJSONError</td>
-<td>The JSON client sent is in a wrong format, or missed some mandatory fields.</td>
+<tr class="row-even"><td>InvalidRequestError</td>
+<td>The client request is in a wrong format, of missed a mandatory field.</td>
 </tr>
 <tr class="row-odd"><td>InvalidHttpMethodError</td>
 <td>Server only accepts POST HTTP method. Client will receive this error if it tries to use other method.</td>
@@ -329,7 +381,25 @@ Common causes:</p>
 
 <h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="install.html">How to install and run</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">API of the World Server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#protocol">Protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#surface-types">Surface Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commands-related-to-birth">Commands Related to Birth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commands-to-control-the-robot-actions">Commands to Control the Robot (Actions)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#installing-dependencies">Installing Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#configuring-nginx">Configuring Nginx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#running-the-server">Running the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#server-configurations">Server configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#running-tests">Running Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Writing a Simple Robot</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API of the World Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#protocol">Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#surface-types">Surface Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commands-related-to-birth">Commands Related to Birth</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commands-to-control-the-robot-actions">Commands to Control the Robot (Actions)</a></li>

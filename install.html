@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to install and run &mdash; Beneath a Binary Sky</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Beneath a Binary Sky" href="index.html" />
+    <link rel="next" title="API of the World Server" href="api.html" />
+    <link rel="prev" title="Beneath a Binary Sky" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="api.html" title="API of the World Server"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Beneath a Binary Sky"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Beneath a Binary Sky</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-install-and-run">
+<h1>How to install and run<a class="headerlink" href="#how-to-install-and-run" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="installing-dependencies">
+<h2>Installing Dependencies<a class="headerlink" href="#installing-dependencies" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="gnu-linux">
+<h3>Gnu/Linux<a class="headerlink" href="#gnu-linux" title="Permalink to this headline">¶</a></h3>
+<p>Beneath a Binary Sky is depend on the followings:</p>
+<ul class="simple">
+<li>python3</li>
+<li>libmemcached</li>
+<li>memcached</li>
+<li>nginx</li>
+<li>pylibmc</li>
+<li>uwsgi</li>
+<li>msgpack-python</li>
+</ul>
+<p>The following instructions explains how to easily install these dependencies.</p>
+<p>First, installing Python 3 and Memcached. On Debian based distros
+(like Debian, Ubuntu, Mint, etc), you can simply use <code class="docutils literal"><span class="pre">apt</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo apt-get install python3 python3-dev python3-pip libmemcached memcached nginx
+</pre></div>
+</div>
+<p>On other distros, check your package management to find and install these packages.</p>
+<p>After that, you can use <code class="docutils literal"><span class="pre">pip3</span></code> to install Python packages. This step is same for all distors:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo pip3 install pylibmc uwsgi msgpack-python
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="configuring-nginx">
+<h2>Configuring Nginx<a class="headerlink" href="#configuring-nginx" title="Permalink to this headline">¶</a></h2>
+<p>The server should be behind a Http Server. Server communicates with the Http Server using UWSGI.</p>
+<p>You can find sample configuration files in <code class="docutils literal"><span class="pre">sample_configs/nginx_configs/</span></code> directory. Copy
+<code class="docutils literal"><span class="pre">binary-sky.conf</span></code> into <code class="docutils literal"><span class="pre">/etc/nginx/sites-enabled/</span></code> directory. Also, copy
+<code class="docutils literal"><span class="pre">binary-sky.key</span></code> and <code class="docutils literal"><span class="pre">binary-sky.crt</span></code> into <code class="docutils literal"><span class="pre">/etc/nginx/ssl-certs/</span></code> (if directory
+doesn&#8217;t exists, create it).</p>
+<p>Using this sample configurations, Nginx and server should work fine. There&#8217;s some comments
+on the config file that explains what these configs mean.</p>
+<p>Then, stop and start the Nginx again:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo nginx -s stop
+sudo nginx -s start
+</pre></div>
+</div>
+<p><strong>Note</strong>: The certificate files are self-signed certificates, which are not valid. You should
+use real signed certificates, if you want to host the server somewhere public.</p>
+<div class="section" id="security-note">
+<h3>Security Note<a class="headerlink" href="#security-note" title="Permalink to this headline">¶</a></h3>
+<p>By default, Nginx listens on 80 port for any coming HTTP request. This can cause security issues.
+If you don&#8217;t want to use it, it is highly recommended to disable this default site.</p>
+<p>To do so, find a <code class="docutils literal"><span class="pre">default</span></code> file or something similar in <code class="docutils literal"><span class="pre">/etc/nginx/sites-enabled/</span></code>, and
+remove it. It&#8217;s usually only a link to <code class="docutils literal"><span class="pre">/etc/nginx/sites-available</span></code>, and is safe to remove.</p>
+</div>
+</div>
+<div class="section" id="running-the-server">
+<h2>Running the server<a class="headerlink" href="#running-the-server" title="Permalink to this headline">¶</a></h2>
+<p>Now that Nginx is up and running, you should start the server.</p>
+<p>To run the server, switch to <code class="docutils literal"><span class="pre">src</span></code> directory, and run:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python3 start.py
+</pre></div>
+</div>
+<p>It will start the server with the default config files. The default configs
+should work with the sample config of Nginx, out-of-the-box.</p>
+</div>
+<div class="section" id="server-configurations">
+<h2>Server configurations<a class="headerlink" href="#server-configurations" title="Permalink to this headline">¶</a></h2>
+<p>This section explains configurations to customize the server behavior.</p>
+<p>There is three config files:</p>
+<div class="section" id="server-configs">
+<h3>Server Configs<a class="headerlink" href="#server-configs" title="Permalink to this headline">¶</a></h3>
+<p>This config customizes behavior and rules of the world. Such as, robot&#8217;s initial energy and
+plant&#8217;s maximum life.</p>
+<p>The default config file can be found in <code class="docutils literal"><span class="pre">sample_configs/sample.config</span></code>. It contains all the
+available options, and explained each of them. Read this to learn about server configurations.</p>
+</div>
+<div class="section" id="world-file">
+<h3>World File<a class="headerlink" href="#world-file" title="Permalink to this headline">¶</a></h3>
+<p>The World File defines the map of the world. This file should contains a matrix of numbers.
+Each number determines a Square Type, i.e. Soil or Water. All of the matrix&#8217;s lines should
+be in same size. The top left corner of the matrix is 0,0 location.</p>
+<p>The default world file is <code class="docutils literal"><span class="pre">sample_configs/small.world</span></code>. Use it as a sample to start
+creating your own world.</p>
+</div>
+<div class="section" id="logging-config">
+<h3>Logging Config<a class="headerlink" href="#logging-config" title="Permalink to this headline">¶</a></h3>
+<p>The third config is the Logging Config. This is the Python&#8217;s logging file. You can find the documentation
+of how to config this file on <a class="reference external" href="https://docs.python.org/3/library/logging.config.html">Python&#8217;s doc site</a>.</p>
+<p>For production server, it is recommended to use Syslog for logging. It have lower overhead on server.
+To do so, on <em>handlers</em> section, change the <em>keys</em> option to <em>syslog</em>. Then, in <em>logger_root</em> section,
+change the <em>handler</em> option to <em>syslog</em>. Note that your Syslog server should be started, or server will
+not start.</p>
+</div>
+<div class="section" id="providing-different-config-files-to-server">
+<h3>Providing Different Config Files to Server<a class="headerlink" href="#providing-different-config-files-to-server" title="Permalink to this headline">¶</a></h3>
+<p>By default, server loads the default config files. If you want to load another file instead,
+you can pass options to the <em>start.py</em> file. For example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python3 start.py --config /path/to/config --world /path/to/world
+</pre></div>
+</div>
+<p>You can see all the available options by invoking <em>help</em>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python3 start.py --help
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="running-tests">
+<h2>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
+<p>To check the health of the server (e.g. it will run without any problem on your machine),
+you can run tests. To do so, change your directory to <em>tests</em>, then simply invoke:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python3 start.py
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Beneath a Binary Sky</a></h1>
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=aidin36&repo=beneath-a-binary-sky&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to install and run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API of the World Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-dependencies">Installing Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gnu-linux">Gnu/Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-nginx">Configuring Nginx</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#security-note">Security Note</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-server">Running the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#server-configurations">Server configurations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#server-configs">Server Configs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#world-file">World File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging-config">Logging Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#providing-different-config-files-to-server">Providing Different Config Files to Server</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-tests">Running Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Writing a Simple Robot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API of the World Server</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Aidin Gharibnavaz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
