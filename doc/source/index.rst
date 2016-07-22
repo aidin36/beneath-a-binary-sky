@@ -8,9 +8,10 @@ Beneath a Binary Sky
   :hidden:
 
   api
+  tutorial
 
 What is it?
---------------
+-----------
 
 Beneath a Binary Sky is a programming game. It means, players are not humans, but programs. Gamer writes a program (a robot) and set it to live on a simulated world. The goal of each robot is to live longer, and produce more childern.
 
@@ -32,7 +33,7 @@ Outstanding Features
 .. TODO: An image showing the relation between robots and the simulator server.
 
 Free Software
----------------
+-------------
 
 .. image:: _static/gplv3.png
   :alt: Gnu General Public License, version 3

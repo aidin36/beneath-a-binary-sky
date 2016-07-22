@@ -5,6 +5,54 @@ API of the World Server
 
 This document explains the API that a robot should use to interact with the server.
 
+
+Protocol
+--------
+
+Clients (robots) interacts with server using HTTPS protocol. They sends their commands
+using POST method. Each command consist of a dictionary, which contains a *command key*,
+a *password* and *args*. This dictionary is serialized using JSON or MsgPack.
+
+By default, JSON listener can be reached on ``/json`` URL, and MsgPack is on ``/msgpack``.
+
+So, in short, a client serializes a dictionary, and POST it to ``/msgpack`` URL of the
+server.
+
+In response, server sends a dictionary which is serialized using the same protocol client
+used.
+
+The response contains a *status*. This status is an integer number: 200 means the command
+executed without any problem, and 500 means there was an error. On success, response
+contains a *result*, which is the result of the command. If command hadn't any result,
+the *result* will be ``null``.
+
+As an example, a robot can get general information about the world using *info* command.
+Client sends this to the server::
+
+    {"command": "born",
+     "password": "19IujfnCjd17Wo",
+     "args": []}
+
+No arguments passed, so *args* is an empty list. Note that *args* key should always be provided.
+If there's no argument, like this example, an empty list should be send.
+
+If execution was successful, server response with::
+
+    {"status": 200,
+     "result": {"robot_id": "3321.98.184",
+                "password": "Nhc781wWsh210Dnc"}
+    }
+
+But if any errors occur, server sends a response like this::
+
+    {"status": 500,
+     "error_code": "AuthenticationFailedError",
+     "error_message": "Invalid password"}
+
+For some examples about how to write a robot client, see :doc:`tutorial`. The rest of this
+document explains the commands and exceptions in details.
+
+
 Surface Types
 -------------
 
@@ -267,6 +315,9 @@ If any errors occur, client will receive a dictionary like these::
     {"status": 500,
      "error_code": "AuthenticationFailedError",
      "error_message": "Wrong password for Robot 6542.6.876"}
+
+Error codes and their meanings listed in the table below.
+
 
 =========================================  =====================================
 Error Code                                 Description
