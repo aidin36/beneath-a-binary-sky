@@ -17,18 +17,18 @@ What is it?
 
 Beneath a Binary Sky is a programming game. It means, players are not humans, but programs. Gamer writes a program (a robot) and set it to live on a simulated world. The goal of each robot is to live longer, and produce more childern.
 
-Unlike most of similar games out there, Beneath a Binary Sky is a peaceful world. The goal is not to kill other robots and prove that you're the strongest, rather it about co-operating to make a better living, a better world.
+Unlike most of similar games out there, Beneath a Binary Sky is a peaceful world. The goal is not to kill other robots and prove that you're the strongest, rather it's about co-operating to make a better living, a better world.
 
 .. TODO: An image that shows a robot and a plant, and it should note that "robots should cultivate in order to make food".
 
-Beneath a Binary Sky can be used as a tool for researching in Artificial Intelligence (specially Intelligence Agent), or simply as a high level game for programmers.
+Beneath a Binary Sky can be used as a tool for researching in Artificial Intelligence (specially Intelligent Agent), or simply as a high level game for programmers.
 
 Outstanding Features
 --------------------
 
 * Each robot is controlled by a separate process which communicates with the server through network. Thus, robots can be written in any language, on any platform.
 
-* Robots can clone themselves (producing children).
+* Robots can re-produce children.
 
 * All of the rules of the world is configurable.
 
@@ -49,15 +49,15 @@ Key Rules of the World
 
 * Plants need water in order to grow. Robots can take water from the specific places on the map (marked as *water*) and pour it on the plants.
 
-* If a plant receive enough water durin its life, it becomes mature. Robots can eat matured plants and gain energy.
+* If a plant receives enough water durin its life, it becomes mature. Robots can eat matured plants and gain energy.
 
 * If a plant don't receive water for a while, it will die.
 
 * If a robot ran out of energy, it will die.
 
-* Robots also age. They will die after living for a specific time. They should try to give birth to new children if they want to become extinct.
+* Robots also age. They will die after living for a specific time. They should try to give birth to new children if they don't want to become extinct.
 
-* Robots need to gain an amout of honour, in order to gain allowance of giving birth. Honour will be given to the robots who contribute to the society, by making plants reach their maturity.
+* Robots need to gain an amout of honor, in order to gain allowance of giving birth. Honor will be given to the robots who contribute to the society, by watering plants.
 
 * All of the amounts mentioned above (initial energy, maximum age of robots, required honour to give birth, etc) are configurable.
 
