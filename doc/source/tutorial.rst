@@ -35,6 +35,7 @@ to the server.
 
 In Python, we will do this::
 
+    import sys
     import http.client
     import msgpack
 
@@ -51,7 +52,11 @@ In Python, we will do this::
     packed_request = msgpack.packb(request)
 
     # Now that our request is ready, we sent it using POST method to ``/msgpack`` URL.
-    packed_response = connection.request("POST", "/msgpack", packed_request)
+    connection.request("POST", "/msgpack", packed_request)
+
+    # Getting response.
+    http_response = connection.getresponse()
+    packed_response = http_response.read()
 
     # Server respond in MsgPack too, so we need to unpack the response
     # before we can use it.
@@ -62,7 +67,8 @@ In Python, we will do this::
     # Before continue, we checked if any errors occurred. If there was any error
     # in executing the command, server would set the *status* code of the response to 500.
     if response["status"] == 500:
-        print("Error!", reponse["error_code"], ":", response["error_message"])
+        print("Error!", response["error_code"], ":", response["error_message"])
+        sys.exit(10)
 
     # there's a "result" key in the response, which contains the ID and Password
     # of the newly borned robot.
@@ -91,7 +97,9 @@ Following our Python example, add these lines to the previous code::
     packed_request = msgpack.packb(request)
 
     # Sending message using POST method.
-    packed_response = connection.request("POST", "/msgpack", packed_request)
+    connection.request("POST", "/msgpack", packed_request)
+    http_response = connection.getresponse()
+    packed_response = http_response.read()
 
     # Unpacking the response as before.
     response = msgpack.unpackb(packed_response, encoding="utf-8")
