@@ -10,6 +10,7 @@ Beneath a Binary Sky
   install
   tutorial
   api
+  contributing
 
 
 What is it?
