@@ -78,11 +78,17 @@ Commands Related to Birth
 This is the first command a robot should send to the server. By executing this command, robot will
 be added to the world. You can think of it as login.
 
-*arguments*: The password argument of this command, is one of the pre-definied passwords on
+*arguments*:
+
+password: *string* The password argument of this command, is one of the pre-definied passwords on
 the server. This is a one-time password.
 
-An optional Parent ID can also be send to the server. If Parent ID passed, the new robot will be
-born somewhere close to its parent.
+In *args*, two optional arguments can be send:
+
+First one is a Parent ID (string). If Parent ID passed, the new robot will be norn somewhere close to its parent.
+
+Second one is a name (string). This name can be used later to trace what a robot did, how many child she
+reproduced, etc.
 
 *result*: A dictionary, containing ID and password of the new robot. This password is the one
 that should be send along with every command.
@@ -99,6 +105,11 @@ Example of command with a Parent ID::
      "command": "born",
      "args": ["8112.10.910"]}
 
+Example of command with no parent, but a name::
+
+    {"password": "Mn81Ey19Ncy7Z2xD",
+     "command": "born",
+     "args": [None, "Good Bot"]}
 
 Example of Result::
 
