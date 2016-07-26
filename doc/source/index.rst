@@ -24,6 +24,8 @@ Unlike most of similar games out there, Beneath a Binary Sky is a peaceful world
 The goal is not to kill other robots and prove that you're the strongest,
 rather it's about co-operating to make a better living, a better world.
 
+In order to live, robots should cultivate and gain their food.
+
 .. TODO: An image that shows a robot and a plant, and it should note that "robots should cultivate in order to make food".
 
 Beneath a Binary Sky can be used as a tool for researching in Artificial Intelligence
