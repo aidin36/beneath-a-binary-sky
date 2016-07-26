@@ -34,6 +34,11 @@ Outstanding Features
 
 * Each robot is controlled by a separate process which communicates with the server
   through network. Thus, robots can be written in any language, on any platform.
+  In other words, server simulates the physic of the robots, and their brains are
+  on another machine.
+
+* Because of the separation of robot's brains from the world, there's no rule for, or
+  limits on how robots are think or decide, or how fast or slow they are.
 
 * Robots can re-produce children.
 
