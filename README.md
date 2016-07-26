@@ -4,5 +4,5 @@ Beneath a Binary Sky
 
 Beneath a Binary Sky is a programming game, in which player writes robots and set them to live in a simulated world. Robots must agriculture in order to live.
 
-To find out more, and learn how to configure and run it, see its webpage: https://aidin36.github.io/beneath-a-binary-sky/
+To find out more, and learn how to configure and run it, see its webpage: http://binary-sky.com
 
