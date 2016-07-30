@@ -19,6 +19,7 @@ from utils.singleton import Singleton
 from database.memcached_database import MemcachedDatabase
 from actions.action_manager import ActionManager
 from population.population_control import PopulationControl
+from admin.admin_handler import AdminHandler
 
 
 class Communicator(Singleton):
@@ -28,6 +29,7 @@ class Communicator(Singleton):
         self._database = MemcachedDatabase()
         self._action_manager = ActionManager()
         self._population_control = PopulationControl()
+        self._admin_handler = AdminHandler()
 
     def execute_command(self, password, command, args):
         '''Execute client's command.'''
@@ -35,6 +37,8 @@ class Communicator(Singleton):
         try:
             if command in ["born", "give_birth"]:
                 result = self._population_control.execute_command(password, command, args)
+            elif command == "map_data":
+                result = self._admin_handler.execute_command(password, command, args)
             else:
                 result = self._action_manager.do_action(password, command, args)
 

@@ -17,6 +17,7 @@
 
 from database.memcached_database import MemcachedDatabase
 from utils.exceptions import BinarySkyException
+from utils.configs import Configs
 
 
 class AuthenticationFailedError(BinarySkyException):
@@ -27,6 +28,7 @@ class Authenticator:
 
     def __init__(self):
         self._database = MemcachedDatabase()
+        self._configs = Configs()
 
     def authenticate_robot(self, robot_object, password):
         '''Authenticate the robot access and its password.'''
@@ -50,3 +52,18 @@ class Authenticator:
         @raise InvalidPasswordError: If password wasn't valid.
         '''
         self._database.pop_password(password)
+
+    def authenticate_admin(self, password):
+        '''Authenticates an admin. Admins are the ones who can see
+        things like world statistics.
+        '''
+        admin_password = self._configs.get_server_admin_password()
+
+        if admin_password is None or admin_password.isspace():
+            raise AuthenticationFailedError("Invalid Admin password.")
+
+        if not isinstance(password, str):
+            raise AuthenticationFailedError("Invalid Admin password.")
+
+        if admin_password != password:
+            raise AuthenticationFailedError("Invalid Admin password.")

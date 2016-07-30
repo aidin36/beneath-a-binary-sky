@@ -138,6 +138,20 @@ class MemcachedDatabase(Singleton):
 
         return result
 
+    def get_squares(self, locations_list):
+        '''Gets a list of squares.
+
+        @locations_list: A list of strings in the form of "x,y".
+        '''
+        mc_connection = MemcachedConnection().get_connection()
+
+        result = mc_connection.get_multi(locations_list)
+
+        if result is None:
+            raise exceptions.InvalidLocationError("None of the specified locations is valid.")
+
+        return result
+
     def add_robot(self, robot_object, location):
         '''Adds the new robot object to the specified position.
 

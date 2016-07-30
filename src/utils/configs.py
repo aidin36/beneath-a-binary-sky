@@ -46,6 +46,11 @@ class Configs(Singleton):
                                                  fallback="[]")
         return eval(passwords_list)
 
+    def get_server_admin_password(self):
+        '''Note that it returns None if no password sets.'''
+        return self._config_parser.get("server", "admin_password",
+                                       fallback=None)
+
     def get_robots_initial_energy(self):
         return self._config_parser.getint("robot", "initial_energy",
                                           fallback=75)
